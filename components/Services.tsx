@@ -1,14 +1,12 @@
 import { Service } from '@/lib/types'
 
 const services: Service[] = [
-  { name: 'Consultation initiale', duration: '15 min', price: '1 €', note: 'Obligatoire avant toute première séance' },
-  { name: 'Séance électrolyse', duration: '5 min', price: '17 €' },
+  { name: 'Séance électrolyse', duration: '5 min', price: '20 €' },
   { name: 'Séance électrolyse', duration: '15 min', price: '45 €' },
   { name: 'Séance électrolyse', duration: '30 min', price: '75 €' },
   { name: 'Séance électrolyse', duration: '45 min', price: '100 €' },
   { name: 'Séance électrolyse', duration: '1h', price: '120 €' },
   { name: 'Séance électrolyse', duration: '1h30', price: '148,50 €' },
-  { name: 'Soin visage', duration: 'Variable', price: 'Sur devis' },
 ]
 
 export default function Services() {
@@ -19,10 +17,41 @@ export default function Services() {
           <p className="font-sans text-blush text-sm tracking-widest uppercase mb-4">Prestations</p>
           <h2 className="section-title">Nos services</h2>
           <p className="section-subtitle max-w-xl mx-auto">
-            Chaque séance est adaptée à vos besoins. Une consultation préalable est incluse pour les nouvelles clientes.
+            Chaque séance est adaptée à vos besoins.
           </p>
         </div>
 
+        {/* Consultation gratuite */}
+        <div className="mb-8 bg-blush/10 border-2 border-blush rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-blush rounded-full flex items-center justify-center text-white text-xl shrink-0">✓</div>
+            <div>
+              <h3 className="font-serif text-2xl text-text-primary">Consultation initiale</h3>
+              <p className="font-sans text-text-secondary text-sm mt-1">15 min · Obligatoire avant toute première séance</p>
+            </div>
+          </div>
+          <div className="text-center">
+            <span className="font-serif text-3xl text-blush font-semibold">Gratuite</span>
+            <p className="font-sans text-xs text-text-secondary mt-1">Offerte pour chaque nouvelle cliente</p>
+          </div>
+        </div>
+
+        {/* Offre étudiante */}
+        <div className="mb-12 bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center text-white text-xl shrink-0">🎓</div>
+            <div>
+              <h3 className="font-serif text-2xl text-text-primary">Offre étudiante</h3>
+              <p className="font-sans text-text-secondary text-sm mt-1">Sur présentation d&apos;une carte étudiante valide</p>
+            </div>
+          </div>
+          <div className="text-center">
+            <span className="font-serif text-3xl text-amber-500 font-semibold">-15%</span>
+            <p className="font-sans text-xs text-text-secondary mt-1">Sur toutes les prestations</p>
+          </div>
+        </div>
+
+        {/* Grille des séances */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 border border-beige hover:border-blush hover:shadow-md transition-all">
