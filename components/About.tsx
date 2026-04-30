@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const stats = [
   { value: '86', label: 'Avis vérifiés' },
   { value: '5/5', label: 'Note moyenne' },
@@ -9,9 +11,13 @@ export default function About() {
     <section id="a-propos" className="section-padding bg-white">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
         <div className="relative">
-          <div className="w-full aspect-[4/5] rounded-2xl flex items-center justify-center"
-            style={{ background: 'linear-gradient(145deg, #E8D5C4, #C9A99A)' }}>
-            <span className="text-white/50 font-serif italic text-xl">Photo d&apos;Amal</span>
+          <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden">
+            <Image
+              src="/boutique-2.jpg"
+              alt="Cabinet Electrolyse Signature"
+              fill
+              className="object-cover"
+            />
           </div>
           <div className="absolute -bottom-4 -right-4 w-full h-full border-2 border-beige rounded-2xl -z-10" />
         </div>
