@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #FDFAF7;
+  --color-beige: #E8D5C4;
+  --color-blush: #C9A99A;
+  --color-text-primary: #3D3535;
+  --color-text-secondary: #8C7B7B;
+  --font-serif: var(--font-cormorant), serif;
+  --font-sans: var(--font-lato), sans-serif;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-bg text-text-primary font-sans; }
+  h1, h2, h3 { @apply font-serif; }
+}
+
+@layer utilities {
+  .section-padding { @apply py-20 px-6 md:px-12 lg:px-24; }
+  .section-title { @apply font-serif text-4xl md:text-5xl italic text-text-primary mb-4; }
+  .section-subtitle { @apply text-text-secondary text-lg font-light mb-12; }
+}
