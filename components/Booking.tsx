@@ -1,7 +1,3 @@
-'use client'
-
-import Script from 'next/script'
-
 export default function Booking() {
   return (
     <section id="reservation" className="section-padding bg-white">
@@ -17,24 +13,17 @@ export default function Booking() {
           </div>
         </div>
 
-        <div id="cal-booking" className="w-full min-h-[700px] rounded-2xl overflow-hidden border border-beige bg-bg" />
+        <div className="rounded-2xl overflow-hidden border border-beige shadow-sm">
+          <iframe
+            src="https://cal.com/electrolyse.signature?embed=true&theme=light&layout=month_view"
+            width="100%"
+            height="700"
+            frameBorder="0"
+            title="Réservation en ligne — Electrolyse Signature"
+            loading="lazy"
+          />
+        </div>
       </div>
-
-      <Script
-        src="https://app.cal.com/embed/embed.js"
-        strategy="afterInteractive"
-        onLoad={() => {
-          const Cal = (window as any).Cal
-          if (!Cal) return
-          Cal('init', { origin: 'https://cal.com' })
-          Cal('inline', {
-            elementOrSelector: '#cal-booking',
-            calLink: 'electrolyse.signature',
-            config: { layout: 'month_view', theme: 'light' },
-          })
-          Cal('ui', { hideEventTypeDetails: false, layout: 'month_view' })
-        }}
-      />
     </section>
   )
 }
