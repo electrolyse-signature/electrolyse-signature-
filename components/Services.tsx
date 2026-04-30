@@ -2,11 +2,18 @@ import { Service } from '@/lib/types'
 
 const services: Service[] = [
   { name: 'Séance électrolyse', duration: '5 min', price: '20 €' },
-  { name: 'Séance électrolyse', duration: '15 min', price: '45 €' },
+  { name: 'Séance électrolyse', duration: '10 min', price: '30 €' },
+  { name: 'Séance électrolyse', duration: '15 min', price: '40 €' },
+  { name: 'Séance électrolyse', duration: '20 min', price: '55 €' },
+  { name: 'Séance électrolyse', duration: '25 min', price: '65 €' },
   { name: 'Séance électrolyse', duration: '30 min', price: '75 €' },
+  { name: 'Séance électrolyse', duration: '35 min', price: '85 €' },
+  { name: 'Séance électrolyse', duration: '40 min', price: '90 €' },
   { name: 'Séance électrolyse', duration: '45 min', price: '100 €' },
-  { name: 'Séance électrolyse', duration: '1h', price: '120 €' },
-  { name: 'Séance électrolyse', duration: '1h30', price: '148,50 €' },
+  { name: 'Séance électrolyse', duration: '50 min', price: '110 €' },
+  { name: 'Séance électrolyse', duration: '55 min', price: '120 €' },
+  { name: 'Séance électrolyse', duration: '1h', price: '130 €' },
+  { name: 'Séance électrolyse', duration: '1h30', price: '175 €' },
 ]
 
 export default function Services() {
