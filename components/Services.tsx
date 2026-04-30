@@ -29,17 +29,31 @@ export default function Services() {
         </div>
 
         {/* Consultation gratuite */}
-        <div className="mb-8 bg-blush/10 border-2 border-blush rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-blush rounded-full flex items-center justify-center text-white text-xl shrink-0">✓</div>
-            <div>
-              <h3 className="font-serif text-2xl text-text-primary">Consultation initiale</h3>
-              <p className="font-sans text-text-secondary text-sm mt-1">15 min · Obligatoire avant toute première séance</p>
+        <div className="mb-8 bg-blush/10 border-2 border-blush rounded-2xl p-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blush rounded-full flex items-center justify-center text-white text-xl shrink-0">✓</div>
+              <div>
+                <h3 className="font-serif text-2xl text-text-primary">Consultation initiale</h3>
+                <p className="font-sans text-text-secondary text-sm mt-1">15 min · Obligatoire avant toute première séance</p>
+              </div>
+            </div>
+            <div className="text-center shrink-0">
+              <span className="font-serif text-3xl text-blush font-semibold">Gratuite</span>
+              <p className="font-sans text-xs text-text-secondary mt-1">Offerte pour chaque nouvelle cliente</p>
             </div>
           </div>
-          <div className="text-center">
-            <span className="font-serif text-3xl text-blush font-semibold">Gratuite</span>
-            <p className="font-sans text-xs text-text-secondary mt-1">Offerte pour chaque nouvelle cliente</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+            {[
+              { icon: '💬', text: 'Présentation de l\'électrolyse et optimisation des résultats' },
+              { icon: '🎯', text: 'Compréhension de vos besoins et réponse à vos questions' },
+              { icon: '✅', text: 'Vérification des éventuelles contre-indications' },
+            ].map(({ icon, text }) => (
+              <div key={text} className="flex items-start gap-2 bg-white/60 rounded-xl px-4 py-3">
+                <span className="text-lg shrink-0">{icon}</span>
+                <p className="font-sans text-text-secondary text-sm">{text}</p>
+              </div>
+            ))}
           </div>
         </div>
 
