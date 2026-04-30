@@ -15,12 +15,9 @@ export default function Gallery() {
         {/* Salle de soin */}
         <div className="mb-6">
           <p className="font-sans text-xs tracking-widest uppercase text-text-secondary mb-4">Salle de soin</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/soin-1.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
-            </div>
+          <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/soin-2.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <Image src="/soin-1.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
               <Image src="/soin-3.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
