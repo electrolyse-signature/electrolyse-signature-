@@ -13,7 +13,7 @@ export default function About() {
         <div className="relative">
           <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden">
             <Image
-              src="/boutique-2.jpg"
+              src="/soin-1.jpeg"
               alt="Cabinet Electrolyse Signature"
               fill
               className="object-cover"

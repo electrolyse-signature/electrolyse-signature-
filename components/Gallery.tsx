@@ -1,13 +1,5 @@
 import Image from 'next/image'
 
-const images = [
-  { src: '/boutique-1.jpg', alt: 'Espace accueil' },
-  { src: '/boutique-2.jpg', alt: 'Salle de soin' },
-  { src: '/boutique-3.jpg', alt: 'Salle de soin' },
-  { src: '/boutique-4.jpg', alt: 'Espace détente' },
-  { src: '/boutique-5.jpg', alt: 'Espace réception' },
-]
-
 export default function Gallery() {
   return (
     <section className="section-padding bg-white">
@@ -20,21 +12,32 @@ export default function Gallery() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div className="col-span-2 md:col-span-2 relative aspect-[16/9] rounded-2xl overflow-hidden">
-            <Image src={images[0].src} alt={images[0].alt} fill className="object-cover hover:scale-105 transition-transform duration-500" />
+        {/* Salle de soin */}
+        <div className="mb-6">
+          <p className="font-sans text-xs tracking-widest uppercase text-text-secondary mb-4">Salle de soin</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="col-span-2 relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image src="/soin-1.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image src="/soin-2.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image src="/soin-3.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
           </div>
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-            <Image src={images[1].src} alt={images[1].alt} fill className="object-cover hover:scale-105 transition-transform duration-500" />
-          </div>
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-            <Image src={images[2].src} alt={images[2].alt} fill className="object-cover hover:scale-105 transition-transform duration-500" />
-          </div>
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-            <Image src={images[3].src} alt={images[3].alt} fill className="object-cover hover:scale-105 transition-transform duration-500" />
-          </div>
-          <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
-            <Image src={images[4].src} alt={images[4].alt} fill className="object-cover hover:scale-105 transition-transform duration-500" />
+        </div>
+
+        {/* Salle d'attente */}
+        <div>
+          <p className="font-sans text-xs tracking-widest uppercase text-text-secondary mb-4">Salle d&apos;attente</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image src="/attente-1.jpeg" alt="Salle d'attente" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+              <Image src="/attente-2.jpeg" alt="Salle d'attente" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+            </div>
           </div>
         </div>
       </div>
