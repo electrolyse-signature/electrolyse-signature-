@@ -9,13 +9,16 @@ export interface CalBooking {
   attendees: Array<{ name: string; email: string }>
 }
 
-export async function getTodayBookings(): Promise<CalBooking[]> {
+export async function getUpcomingBookings(days = 7): Promise<CalBooking[]> {
   const apiKey = process.env.CAL_API_KEY
   if (!apiKey) return []
 
   const today = new Date()
+  const future = new Date(today)
+  future.setDate(future.getDate() + days)
+
   const dateFrom = today.toISOString().split('T')[0]
-  const dateTo = dateFrom
+  const dateTo = future.toISOString().split('T')[0]
 
   const res = await fetch(
     `https://api.cal.com/v1/bookings?apiKey=${apiKey}&dateFrom=${dateFrom}&dateTo=${dateTo}&status=upcoming`,
@@ -23,7 +26,6 @@ export async function getTodayBookings(): Promise<CalBooking[]> {
   )
 
   if (!res.ok) return []
-
   const json = await res.json()
   return json.bookings ?? []
 }

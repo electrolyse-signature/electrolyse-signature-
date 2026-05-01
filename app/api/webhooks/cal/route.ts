@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { verifyCalSignature, extractCancellationData, CalWebhookEvent } from '@/lib/cal-webhook'
 import { supabaseAdmin } from '@/lib/supabase'
 
+const AUTO_BLOCK_THRESHOLD = 3
+
 export async function POST(request: Request) {
   const secret = process.env.CAL_WEBHOOK_SECRET
   if (!secret) {
@@ -27,10 +29,24 @@ export async function POST(request: Request) {
   }
 
   const { error } = await supabaseAdmin.from('cancellations').insert(data)
-
   if (error) {
     console.error('Supabase insert error:', error)
     return NextResponse.json({ error: 'Database error' }, { status: 500 })
+  }
+
+  // Auto-block after AUTO_BLOCK_THRESHOLD cancellations
+  const { count } = await supabaseAdmin
+    .from('cancellations')
+    .select('*', { count: 'exact', head: true })
+    .eq('email', data.email)
+
+  if ((count ?? 0) >= AUTO_BLOCK_THRESHOLD) {
+    await supabaseAdmin
+      .from('blocked_clients')
+      .upsert(
+        { email: data.email, blocked_at: new Date().toISOString(), notes: 'Bloqué automatiquement' },
+        { onConflict: 'email' }
+      )
   }
 
   return NextResponse.json({ ok: true })

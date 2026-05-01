@@ -51,4 +51,5 @@ export interface ClientSummary {
   cancellation_count: number
   last_cancelled_at: string
   is_blocked: boolean
+  note: string | null
 }
