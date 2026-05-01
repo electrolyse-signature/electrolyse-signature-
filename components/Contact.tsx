@@ -5,7 +5,7 @@ import emailjs from '@emailjs/browser'
 
 const hours = [
   { day: 'Lundi', time: 'Fermé' },
-  { day: 'Mardi – Vendredi', time: '10h00 – 19h00' },
+  { day: 'Mardi à Vendredi', time: '10h00 – 19h00' },
   { day: 'Samedi', time: '09h00 – 13h00' },
   { day: 'Dimanche', time: 'Fermé' },
 ]
