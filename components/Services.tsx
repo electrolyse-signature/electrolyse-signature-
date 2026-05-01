@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react'
 import { Service } from '@/lib/types'
 
 const NS = 'seance-electrolyse-20'
@@ -18,7 +21,15 @@ const services: Service[] = [
   { name: 'Séance électrolyse', duration: '1h30',   price: '175 €', calLink: 'electrolyse.signature/seance-electrolyse-175', calNamespace: NS },
 ]
 
+function studentPrice(price: string): string {
+  const num = parseFloat(price.replace(' €', '').replace(',', '.'))
+  const discounted = Math.round(num * 0.85 * 100) / 100
+  return discounted % 1 === 0 ? `${discounted} €` : `${discounted.toFixed(2).replace('.', ',')} €`
+}
+
 export default function Services() {
+  const [studentMode, setStudentMode] = useState(false)
+
   return (
     <section id="services" className="section-padding bg-bg">
       <div className="max-w-6xl mx-auto">
@@ -47,7 +58,7 @@ export default function Services() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2 mb-4">
             {[
-              { icon: '💬', text: 'Présentation de l\'électrolyse et optimisation des résultats' },
+              { icon: '💬', text: "Présentation de l'électrolyse et optimisation des résultats" },
               { icon: '🎯', text: 'Compréhension de vos besoins et réponse à vos questions' },
               { icon: '✅', text: 'Vérification des éventuelles contre-indications' },
             ].map(({ icon, text }) => (
@@ -76,9 +87,24 @@ export default function Services() {
               <p className="font-sans text-text-secondary text-sm mt-1">Sur présentation d&apos;une carte étudiante valide</p>
             </div>
           </div>
-          <div className="text-center">
-            <span className="font-serif text-3xl text-amber-500 font-semibold">-15%</span>
-            <p className="font-sans text-xs text-text-secondary mt-1">Sur toutes les prestations</p>
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <span className="font-serif text-3xl text-amber-500 font-semibold">-15%</span>
+              <p className="font-sans text-xs text-text-secondary mt-1">Sur toutes les prestations</p>
+            </div>
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={studentMode}
+                  onChange={(e) => setStudentMode(e.target.checked)}
+                  className="sr-only"
+                />
+                <div className={`w-12 h-6 rounded-full transition-colors ${studentMode ? 'bg-amber-400' : 'bg-gray-200'}`} />
+                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${studentMode ? 'translate-x-7' : 'translate-x-1'}`} />
+              </div>
+              <span className="font-sans text-sm text-text-secondary">Activer</span>
+            </label>
           </div>
         </div>
 
@@ -91,7 +117,16 @@ export default function Services() {
                   <h3 className="font-serif text-xl text-text-primary">{service.name}</h3>
                   <p className="font-sans text-text-secondary text-sm mt-1">{service.duration}</p>
                 </div>
-                <span className="font-serif text-2xl text-blush">{service.price}</span>
+                <div className="text-right">
+                  <span className={`font-serif text-2xl text-blush block ${studentMode ? 'line-through opacity-40 text-lg' : ''}`}>
+                    {service.price}
+                  </span>
+                  {studentMode && (
+                    <span className="font-serif text-2xl text-amber-500">
+                      {studentPrice(service.price)}
+                    </span>
+                  )}
+                </div>
               </div>
               {service.note && (
                 <p className="font-sans text-xs text-blush bg-blush/10 px-3 py-2 rounded-lg mb-4">
