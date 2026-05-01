@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto'
+import { createHmac, timingSafeEqual } from 'crypto'
 
 export interface CalWebhookEvent {
   triggerEvent: string
@@ -20,7 +20,11 @@ export interface CancellationInsert {
 
 export function verifyCalSignature(rawBody: string, signature: string, secret: string): boolean {
   const expected = `sha256=${createHmac('sha256', secret).update(rawBody).digest('hex')}`
-  return expected === signature
+  try {
+    return timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+  } catch {
+    return false
+  }
 }
 
 export function extractCancellationData(event: CalWebhookEvent): CancellationInsert | null {
