@@ -60,7 +60,7 @@ export default function Contact() {
               </p>
               <div className="mt-3 space-y-1 font-sans text-sm text-text-secondary">
                 <p>🚇 RER A Noisiel – 5 min à pied</p>
-                <p>🚗 Parking devant et derrière le bâtiment</p>
+                <p>🚗 Parking gratuit devant et derrière le bâtiment</p>
                 <p>♿ Accessible PMR</p>
               </div>
             </div>
