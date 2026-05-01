@@ -10,19 +10,26 @@ import BookingsTable from '@/components/BookingsTable'
 
 export const dynamic = 'force-dynamic'
 
+interface CAStats { reel: number; prevu: number }
+
 function computeCA(
   bookings: CalBooking[],
   attendanceMap: Map<string, string>,
   now: Date
-): number {
-  return bookings.reduce((sum, b) => {
-    const price = getBookingPrice(b.startTime, b.endTime, b.title)
-    const isPast = new Date(b.startTime) < now
-    if (isPast) {
-      return attendanceMap.get(String(b.id)) === 'present' ? sum + price : sum
-    }
-    return sum + price
-  }, 0)
+): CAStats {
+  return bookings.reduce(
+    (acc, b) => {
+      const price = getBookingPrice(b.startTime, b.endTime, b.title)
+      const isPast = new Date(b.startTime) < now
+      if (isPast) {
+        if (attendanceMap.get(String(b.id)) === 'present') acc.reel += price
+      } else {
+        acc.prevu += price
+      }
+      return acc
+    },
+    { reel: 0, prevu: 0 }
+  )
 }
 
 export default async function AnnulationsPage() {

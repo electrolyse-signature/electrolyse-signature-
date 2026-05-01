@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { CalBooking } from '@/lib/cal-api'
+import { getBookingPrice } from '@/lib/prices'
 
 interface AttendanceRecord {
   booking_id: string
@@ -79,6 +80,8 @@ export default function BookingsTable({
                 const start = new Date(booking.startTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
                 const end = new Date(booking.endTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 
+                const price = getBookingPrice(booking.startTime, booking.endTime, booking.title)
+
                 return (
                   <tr key={booking.id} className={isAlerted ? 'bg-red-50' : isPast && !attendanceStatus ? 'bg-yellow-50' : ''}>
                     <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap w-28">
@@ -87,6 +90,16 @@ export default function BookingsTable({
                     <td className="px-4 py-3 text-gray-700">{attendee?.name ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{attendee?.email ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-600 hidden md:table-cell">{booking.title}</td>
+                    <td className="px-4 py-3 whitespace-nowrap w-16">
+                      {price > 0 ? (
+                        <span className={isPast
+                          ? attendanceStatus === 'present' ? 'font-semibold text-emerald-600' : 'text-gray-400 line-through'
+                          : 'text-gray-400 italic'
+                        }>
+                          {price} €
+                        </span>
+                      ) : null}
+                    </td>
                     <td className="px-4 py-3 w-40">
                       {isPast ? (
                         attendanceStatus ? (
