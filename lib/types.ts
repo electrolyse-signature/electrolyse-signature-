@@ -28,3 +28,27 @@ export interface GooglePlacesResponse {
     }>
   }
 }
+
+export interface Cancellation {
+  id: string
+  email: string
+  name: string
+  booking_id: string
+  cancelled_at: string
+  reason: string | null
+}
+
+export interface BlockedClient {
+  id: string
+  email: string
+  blocked_at: string
+  notes: string | null
+}
+
+export interface ClientSummary {
+  email: string
+  name: string
+  cancellation_count: number
+  last_cancelled_at: string
+  is_blocked: boolean
+}
