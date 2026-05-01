@@ -43,7 +43,7 @@ export default function Services() {
               <p className="font-sans text-xs text-text-secondary mt-1">Offerte pour chaque nouvelle cliente</p>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-2 mb-4">
             {[
               { icon: '💬', text: 'Présentation de l\'électrolyse et optimisation des résultats' },
               { icon: '🎯', text: 'Compréhension de vos besoins et réponse à vos questions' },
@@ -55,6 +55,12 @@ export default function Services() {
               </div>
             ))}
           </div>
+          <a
+            href="#reservation"
+            className="inline-block w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all"
+          >
+            Réserver ma consultation gratuite →
+          </a>
         </div>
 
         {/* Offre étudiante */}
