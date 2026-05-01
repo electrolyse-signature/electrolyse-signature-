@@ -22,34 +22,13 @@ export default function Booking() {
           </div>
         </div>
 
-        {/* Solution 1 — Popup */}
-        <div className="text-center mb-6">
-          <p className="font-sans text-text-secondary text-sm mb-4">Réserver en un clic</p>
+        <div className="text-center">
           <button
             onClick={() => openCal('general', 'electrolyse.signature')}
             className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             Choisir mon créneau →
           </button>
-        </div>
-
-        {/* Séparateur */}
-        <div className="flex items-center gap-4 my-8">
-          <div className="flex-1 h-px bg-beige" />
-          <span className="font-sans text-text-secondary text-sm">ou directement dans le calendrier</span>
-          <div className="flex-1 h-px bg-beige" />
-        </div>
-
-        {/* Solution 2 — Calendrier intégré */}
-        <div className="rounded-2xl overflow-hidden border border-beige shadow-sm">
-          <iframe
-            src="https://cal.com/electrolyse.signature?embed=true&theme=light&layout=month_view"
-            width="100%"
-            height="700"
-            frameBorder="0"
-            title="Calendrier de réservation — Electrolyse Signature"
-            loading="lazy"
-          />
         </div>
       </div>
     </section>
