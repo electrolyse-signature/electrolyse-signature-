@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { auth, signOut } from '@/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { buildClientSummaries } from '@/lib/client-summaries'
-import { getUpcomingBookings, type CalBooking } from '@/lib/cal-api'
+import { getRecentAndUpcomingBookings, getUpcomingBookings, type CalBooking } from '@/lib/cal-api'
 import AdminTable from '@/components/AdminTable'
 import StatsCards from '@/components/StatsCards'
 import BookingsTable from '@/components/BookingsTable'
@@ -20,13 +20,17 @@ export default async function AnnulationsPage() {
     { data: cancellations, error: cancellationsError },
     { data: blocked, error: blockedError },
     { data: notes },
+    { data: attendanceRows },
     { count: cancellations30d },
-    upcomingBookings,
+    allBookings,
+    upcomingOnly,
   ] = await Promise.all([
     supabaseAdmin.from('cancellations').select('email, name, cancelled_at').order('cancelled_at', { ascending: false }),
     supabaseAdmin.from('blocked_clients').select('email'),
     supabaseAdmin.from('client_notes').select('email, note'),
+    supabaseAdmin.from('attendance').select('booking_id, status'),
     supabaseAdmin.from('cancellations').select('*', { count: 'exact', head: true }).gte('cancelled_at', thirtyDaysAgo.toISOString()),
+    getRecentAndUpcomingBookings(),
     getUpcomingBookings(7),
   ])
 
@@ -36,15 +40,13 @@ export default async function AnnulationsPage() {
 
   const clients = buildClientSummaries(cancellations ?? [], blocked ?? [], notes ?? [])
   const blockedEmails = (blocked ?? []).map(b => b.email)
+  const attendance = (attendanceRows ?? []) as { booking_id: string; status: 'present' | 'absent' }[]
 
   const todayStr = new Date().toISOString().split('T')[0]
-  const weekEnd = new Date()
-  weekEnd.setDate(weekEnd.getDate() + 7)
-
-  const todayCount = upcomingBookings.filter((b: CalBooking) =>
+  const todayCount = upcomingOnly.filter((b: CalBooking) =>
     new Date(b.startTime).toISOString().split('T')[0] === todayStr
   ).length
-  const weekCount = upcomingBookings.length
+  const weekCount = upcomingOnly.length
   const signaledCount = clients.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
 
   const today = new Date().toLocaleDateString('fr-FR', {
@@ -73,9 +75,13 @@ export default async function AnnulationsPage() {
 
         <section>
           <h2 className="text-lg font-medium text-gray-700 mb-3">
-            Planning — {weekCount} rendez-vous (7 jours)
+            Planning — hier &amp; 7 prochains jours
           </h2>
-          <BookingsTable bookings={upcomingBookings} blockedEmails={blockedEmails} />
+          <BookingsTable
+            bookings={allBookings}
+            blockedEmails={blockedEmails}
+            attendance={attendance}
+          />
         </section>
 
         <section>
