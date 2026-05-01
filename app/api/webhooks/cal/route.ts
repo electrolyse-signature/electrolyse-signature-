@@ -19,10 +19,46 @@ export async function POST(request: Request) {
 
   const event: CalWebhookEvent = JSON.parse(rawBody)
 
-  if (event.triggerEvent !== 'BOOKING_CANCELLED') {
-    return NextResponse.json({ ok: true })
+  if (event.triggerEvent === 'BOOKING_CREATED') {
+    return handleBookingCreated(event)
   }
 
+  if (event.triggerEvent === 'BOOKING_CANCELLED') {
+    return handleBookingCancelled(event)
+  }
+
+  return NextResponse.json({ ok: true })
+}
+
+async function handleBookingCreated(event: CalWebhookEvent) {
+  const attendee = event.payload?.attendees?.[0]
+  if (!attendee?.email) return NextResponse.json({ ok: true })
+
+  const email = attendee.email.toLowerCase()
+
+  const { data: blockedRow } = await supabaseAdmin
+    .from('blocked_clients')
+    .select('email')
+    .eq('email', email)
+    .maybeSingle()
+
+  if (!blockedRow) return NextResponse.json({ ok: true })
+
+  await supabaseAdmin.from('pending_approvals').insert({
+    booking_uid: event.payload.uid,
+    email,
+    name: attendee.name ?? '',
+    start_time: event.payload.startTime ?? null,
+    end_time: event.payload.endTime ?? null,
+    title: event.payload.title ?? null,
+    status: 'pending',
+    created_at: event.createdAt ?? new Date().toISOString(),
+  })
+
+  return NextResponse.json({ ok: true })
+}
+
+async function handleBookingCancelled(event: CalWebhookEvent) {
   const data = extractCancellationData(event)
   if (!data) {
     return NextResponse.json({ error: 'Missing attendee data' }, { status: 400 })
