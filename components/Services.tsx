@@ -1,19 +1,21 @@
 import { Service } from '@/lib/types'
 
+const NS = 'seance-electrolyse-20'
+
 const services: Service[] = [
-  { name: 'Séance électrolyse', duration: '5 min', price: '20 €' },
-  { name: 'Séance électrolyse', duration: '10 min', price: '30 €' },
-  { name: 'Séance électrolyse', duration: '15 min', price: '40 €' },
-  { name: 'Séance électrolyse', duration: '20 min', price: '55 €' },
-  { name: 'Séance électrolyse', duration: '25 min', price: '65 €' },
-  { name: 'Séance électrolyse', duration: '30 min', price: '75 €' },
-  { name: 'Séance électrolyse', duration: '35 min', price: '85 €' },
-  { name: 'Séance électrolyse', duration: '40 min', price: '90 €' },
-  { name: 'Séance électrolyse', duration: '45 min', price: '100 €' },
-  { name: 'Séance électrolyse', duration: '50 min', price: '110 €' },
-  { name: 'Séance électrolyse', duration: '55 min', price: '120 €' },
-  { name: 'Séance électrolyse', duration: '1h', price: '130 €' },
-  { name: 'Séance électrolyse', duration: '1h30', price: '175 €' },
+  { name: 'Séance électrolyse', duration: '5 min',  price: '20 €',  calLink: 'electrolyse.signature/seance-electrolyse-20',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '10 min', price: '30 €',  calLink: 'electrolyse.signature/seance-electrolyse-30',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '15 min', price: '40 €',  calLink: 'electrolyse.signature/seance-electrolyse-40',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '20 min', price: '55 €',  calLink: 'electrolyse.signature/seance-electrolyse-55',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '25 min', price: '65 €',  calLink: 'electrolyse.signature/seance-electrolyse-65',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '30 min', price: '75 €',  calLink: 'electrolyse.signature/seance-electrolyse-75',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '35 min', price: '85 €',  calLink: 'electrolyse.signature/seance-electrolyse-85',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '40 min', price: '90 €',  calLink: 'electrolyse.signature/seance-electrolyse-90',  calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '45 min', price: '100 €', calLink: 'electrolyse.signature/seance-electrolyse-100', calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '50 min', price: '110 €', calLink: 'electrolyse.signature/seance-electrolyse-110', calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '55 min', price: '120 €', calLink: 'electrolyse.signature/seance-electrolyse-120', calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '1h',     price: '130 €', calLink: 'electrolyse.signature/seance-electrolyse-130', calNamespace: NS },
+  { name: 'Séance électrolyse', duration: '1h30',   price: '175 €', calLink: 'electrolyse.signature/seance-electrolyse-175', calNamespace: NS },
 ]
 
 export default function Services() {
@@ -97,8 +99,8 @@ export default function Services() {
                 </p>
               )}
               <button
-                data-cal-link="electrolyse.signature/secret"
-                data-cal-namespace="secret"
+                data-cal-link={service.calLink}
+                data-cal-namespace={service.calNamespace}
                 data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
                 className="mt-auto pt-4 text-center w-full font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all cursor-pointer"
               >

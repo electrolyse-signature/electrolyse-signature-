@@ -12,6 +12,8 @@ export interface Service {
   duration: string
   price: string
   note?: string
+  calLink?: string
+  calNamespace?: string
 }
 
 export interface GooglePlacesResponse {
