@@ -149,7 +149,7 @@ export default function Services() {
         </div>
 
         <p className="text-center font-sans text-text-secondary text-sm mt-10">
-          * Tarifs indicatifs. Contactez-nous pour toute question.
+          * Tarifs à titre indicatifs. Contactez-nous pour toute question.
         </p>
       </div>
     </section>
