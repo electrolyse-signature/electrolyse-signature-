@@ -7,20 +7,28 @@ export default function AdminTable({ clients }: { clients: ClientSummary[] }) {
   const [data, setData] = useState(clients)
 
   async function handleBlock(email: string) {
-    await fetch('/api/admin/block', {
+    const res = await fetch('/api/admin/block', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
     })
+    if (!res.ok) {
+      alert('Erreur lors du blocage. Veuillez réessayer.')
+      return
+    }
     setData(prev => prev.map(c => c.email === email ? { ...c, is_blocked: true } : c))
   }
 
   async function handleUnblock(email: string) {
-    await fetch('/api/admin/unblock', {
+    const res = await fetch('/api/admin/unblock', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
     })
+    if (!res.ok) {
+      alert('Erreur lors du déblocage. Veuillez réessayer.')
+      return
+    }
     setData(prev => prev.map(c => c.email === email ? { ...c, is_blocked: false } : c))
   }
 
