@@ -17,7 +17,7 @@ const lato = Lato({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://electrolyse-signature.vercel.app'),
   title: 'Electrolyse Signature | Épilation permanente à Noisiel',
   description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel. Praticienne certifiée Amal. 86 avis 5/5. Prenez rendez-vous en ligne.",
   openGraph: {
