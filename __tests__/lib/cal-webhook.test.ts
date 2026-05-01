@@ -18,9 +18,9 @@ describe('verifyCalSignature', () => {
     expect(verifyCalSignature(body, '', secret)).toBe(false)
   })
 
-  it('returns false when sha256= prefix is missing', () => {
+  it('returns true for raw hex without sha256= prefix (Cal.com format)', () => {
     const hex = createHmac('sha256', secret).update(body).digest('hex')
-    expect(verifyCalSignature(body, hex, secret)).toBe(false)
+    expect(verifyCalSignature(body, hex, secret)).toBe(true)
   })
 })
 

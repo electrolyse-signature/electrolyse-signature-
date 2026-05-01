@@ -19,9 +19,11 @@ export interface CancellationInsert {
 }
 
 export function verifyCalSignature(rawBody: string, signature: string, secret: string): boolean {
-  const expected = `sha256=${createHmac('sha256', secret).update(rawBody).digest('hex')}`
+  const expectedHex = createHmac('sha256', secret).update(rawBody).digest('hex')
+  // Cal.com sends the raw hex without a prefix in X-Cal-Signature-256
+  const incoming = signature.startsWith('sha256=') ? signature.slice(7) : signature
   try {
-    return timingSafeEqual(Buffer.from(expected), Buffer.from(signature))
+    return timingSafeEqual(Buffer.from(expectedHex), Buffer.from(incoming))
   } catch {
     return false
   }
