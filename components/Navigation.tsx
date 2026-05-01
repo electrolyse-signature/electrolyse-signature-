@@ -37,8 +37,8 @@ export default function Navigation() {
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-bg shadow-sm' : 'bg-transparent'}`}>
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="#accueil" className="flex flex-col leading-none">
-          <span className="font-serif text-xs tracking-[0.2em] uppercase text-text-secondary">Electrolyse</span>
-          <span className="font-serif text-xl italic text-text-primary tracking-wide">Signature</span>
+          <span className="font-serif text-sm tracking-[0.2em] uppercase text-text-secondary font-semibold">Electrolyse</span>
+          <span className="font-serif text-3xl italic text-text-primary tracking-wide font-semibold">Signature</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">
