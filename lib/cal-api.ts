@@ -54,3 +54,16 @@ export async function getUpcomingBookings(days = 7): Promise<CalBooking[]> {
     'upcoming'
   )
 }
+
+export async function getMonthBookings(): Promise<CalBooking[]> {
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+
+  const [past, upcoming] = await Promise.all([
+    fetchBookings(monthStart.toISOString().split('T')[0], now.toISOString().split('T')[0], 'past'),
+    fetchBookings(now.toISOString().split('T')[0], monthEnd.toISOString().split('T')[0], 'upcoming'),
+  ])
+
+  return [...past, ...upcoming]
+}

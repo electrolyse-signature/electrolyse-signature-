@@ -2,12 +2,28 @@ import { redirect } from 'next/navigation'
 import { auth, signOut } from '@/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { buildClientSummaries } from '@/lib/client-summaries'
-import { getRecentAndUpcomingBookings, getUpcomingBookings, type CalBooking } from '@/lib/cal-api'
+import { getRecentAndUpcomingBookings, getUpcomingBookings, getMonthBookings, type CalBooking } from '@/lib/cal-api'
+import { getBookingPrice } from '@/lib/prices'
 import AdminTable from '@/components/AdminTable'
 import StatsCards from '@/components/StatsCards'
 import BookingsTable from '@/components/BookingsTable'
 
 export const dynamic = 'force-dynamic'
+
+function computeCA(
+  bookings: CalBooking[],
+  attendanceMap: Map<string, string>,
+  now: Date
+): number {
+  return bookings.reduce((sum, b) => {
+    const price = getBookingPrice(b.startTime, b.endTime, b.title)
+    const isPast = new Date(b.startTime) < now
+    if (isPast) {
+      return attendanceMap.get(String(b.id)) === 'present' ? sum + price : sum
+    }
+    return sum + price
+  }, 0)
+}
 
 export default async function AnnulationsPage() {
   const session = await auth()
@@ -24,6 +40,7 @@ export default async function AnnulationsPage() {
     { count: cancellations30d },
     allBookings,
     upcomingOnly,
+    monthBookings,
   ] = await Promise.all([
     supabaseAdmin.from('cancellations').select('email, name, cancelled_at').order('cancelled_at', { ascending: false }),
     supabaseAdmin.from('blocked_clients').select('email'),
@@ -32,6 +49,7 @@ export default async function AnnulationsPage() {
     supabaseAdmin.from('cancellations').select('*', { count: 'exact', head: true }).gte('cancelled_at', thirtyDaysAgo.toISOString()),
     getRecentAndUpcomingBookings(),
     getUpcomingBookings(7),
+    getMonthBookings(),
   ])
 
   if (cancellationsError || blockedError) {
@@ -41,15 +59,37 @@ export default async function AnnulationsPage() {
   const clients = buildClientSummaries(cancellations ?? [], blocked ?? [], notes ?? [])
   const blockedEmails = (blocked ?? []).map(b => b.email)
   const attendance = (attendanceRows ?? []) as { booking_id: string; status: 'present' | 'absent' }[]
+  const attendanceMap = new Map(attendance.map(a => [a.booking_id, a.status]))
 
-  const todayStr = new Date().toISOString().split('T')[0]
+  const now = new Date()
+  const todayStr = now.toISOString().split('T')[0]
+
+  const weekStart = new Date(now)
+  weekStart.setDate(now.getDate() - now.getDay() + 1) // lundi
+  weekStart.setHours(0, 0, 0, 0)
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekStart.getDate() + 6)
+  weekEnd.setHours(23, 59, 59, 999)
+
   const todayCount = upcomingOnly.filter((b: CalBooking) =>
     new Date(b.startTime).toISOString().split('T')[0] === todayStr
   ).length
   const weekCount = upcomingOnly.length
   const signaledCount = clients.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
 
-  const today = new Date().toLocaleDateString('fr-FR', {
+  const todayBookings = monthBookings.filter(b =>
+    new Date(b.startTime).toISOString().split('T')[0] === todayStr
+  )
+  const weekBookings = monthBookings.filter(b => {
+    const t = new Date(b.startTime)
+    return t >= weekStart && t <= weekEnd
+  })
+
+  const caToday = computeCA(todayBookings, attendanceMap, now)
+  const caWeek = computeCA(weekBookings, attendanceMap, now)
+  const caMonth = computeCA(monthBookings, attendanceMap, now)
+
+  const today = now.toLocaleDateString('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long',
   })
 
@@ -71,6 +111,9 @@ export default async function AnnulationsPage() {
           weekCount={weekCount}
           cancellations30d={cancellations30d ?? 0}
           signaledCount={signaledCount}
+          caToday={caToday}
+          caWeek={caWeek}
+          caMonth={caMonth}
         />
 
         <section>
