@@ -89,7 +89,7 @@ export default function Services() {
             <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center text-white text-xl shrink-0">🎓</div>
             <div>
               <h3 className="font-serif text-2xl text-text-primary">Offre étudiante</h3>
-              <p className="font-sans text-text-secondary text-sm mt-1">Sur présentation d&apos;une carte étudiante valide</p>
+              <p className="font-sans text-text-secondary text-sm mt-1">Sur présentation d&apos;une carte étudiante en cours de validité</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
