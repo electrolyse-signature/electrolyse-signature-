@@ -27,14 +27,12 @@ export default function Hero() {
           La seule méthode d&apos;épilation définitivement reconnue, entre des mains expertes.
         </p>
 
-        <button
-          data-cal-link="electrolyse.signature/secret"
-          data-cal-namespace="secret"
-          data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+        <a
+          href="#reservation"
           className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
         >
           Prendre rendez-vous
-        </button>
+        </a>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-secondary opacity-60">

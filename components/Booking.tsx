@@ -1,3 +1,12 @@
+'use client'
+
+function openCal(namespace: string, calLink: string) {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.[namespace]) {
+    Cal.ns[namespace]('modal', { calLink })
+  }
+}
+
 export default function Booking() {
   return (
     <section id="reservation" className="section-padding bg-white">
@@ -17,9 +26,7 @@ export default function Booking() {
         <div className="text-center mb-6">
           <p className="font-sans text-text-secondary text-sm mb-4">Réserver en un clic</p>
           <button
-            data-cal-link="electrolyse.signature/secret"
-            data-cal-namespace="secret"
-            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            onClick={() => openCal('general', 'electrolyse.signature')}
             className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             Choisir mon créneau →

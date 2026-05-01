@@ -27,6 +27,13 @@ function studentPrice(price: string): string {
   return discounted % 1 === 0 ? `${discounted} €` : `${discounted.toFixed(2).replace('.', ',')} €`
 }
 
+function openCal(namespace: string, calLink: string) {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.[namespace]) {
+    Cal.ns[namespace]('modal', { calLink })
+  }
+}
+
 export default function Services() {
   const [studentMode, setStudentMode] = useState(false)
 
@@ -69,9 +76,7 @@ export default function Services() {
             ))}
           </div>
           <button
-            data-cal-link="electrolyse.signature/secret"
-            data-cal-namespace="secret"
-            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            onClick={() => openCal('secret', 'electrolyse.signature/secret')}
             className="w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all cursor-pointer"
           >
             Réserver ma consultation gratuite →
@@ -134,9 +139,7 @@ export default function Services() {
                 </p>
               )}
               <button
-                data-cal-link={service.calLink}
-                data-cal-namespace={service.calNamespace}
-                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                onClick={() => openCal(service.calNamespace!, service.calLink!)}
                 className="mt-auto pt-4 text-center w-full font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all cursor-pointer"
               >
                 Réserver →
