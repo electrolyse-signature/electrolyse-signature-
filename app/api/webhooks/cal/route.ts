@@ -59,6 +59,16 @@ async function handleBookingCreated(event: CalWebhookEvent) {
 }
 
 async function handleBookingCancelled(event: CalWebhookEvent) {
+  // Ignore cancellations triggered by the salon rejecting a blocked client's booking
+  const { data: rejected } = await supabaseAdmin
+    .from('pending_approvals')
+    .select('id')
+    .eq('booking_uid', event.payload.uid)
+    .eq('status', 'rejected')
+    .maybeSingle()
+
+  if (rejected) return NextResponse.json({ ok: true })
+
   const data = extractCancellationData(event)
   if (!data) {
     return NextResponse.json({ error: 'Missing attendee data' }, { status: 400 })

@@ -19,6 +19,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'ID and booking_uid required' }, { status: 400 })
   }
 
+  // Mark as rejected BEFORE calling Cal.com so the incoming BOOKING_CANCELLED
+  // webhook can detect this is a salon-initiated cancellation and skip recording it.
+  const { error } = await supabaseAdmin
+    .from('pending_approvals')
+    .update({ status: 'rejected', decided_at: new Date().toISOString() })
+    .eq('id', id)
+
+  if (error) return NextResponse.json({ error: 'Database error' }, { status: 500 })
+
   const apiKey = process.env.CAL_API_KEY
   if (apiKey) {
     await fetch(`${CAL_API_BASE}/bookings/${bookingUid}/cancel`, {
@@ -31,13 +40,6 @@ export async function POST(request: Request) {
       body: JSON.stringify({ reason: 'Client bloqué — réservation refusée par le salon' }),
     })
   }
-
-  const { error } = await supabaseAdmin
-    .from('pending_approvals')
-    .update({ status: 'rejected', decided_at: new Date().toISOString() })
-    .eq('id', id)
-
-  if (error) return NextResponse.json({ error: 'Database error' }, { status: 500 })
 
   return NextResponse.json({ ok: true })
 }
