@@ -49,7 +49,8 @@
       "Bash(Write-Output \"done\")",
       "Bash(git checkout *)",
       "Bash(git merge *)",
-      "Bash(date -v+7d +%Y-%m-%d)"
+      "Bash(date -v+7d +%Y-%m-%d)",
+      "Bash(git rebase *)"
     ]
   },
   "hooks": {

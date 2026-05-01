@@ -7,6 +7,9 @@ export interface CalWebhookEvent {
     uid: string
     attendees: Array<{ email: string; name: string }>
     cancellationReason?: string | null
+    startTime?: string
+    endTime?: string
+    title?: string
   }
 }
 
