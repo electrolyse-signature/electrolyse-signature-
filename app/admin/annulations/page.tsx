@@ -7,6 +7,7 @@ import { getBookingPrice } from '@/lib/prices'
 import AdminTable from '@/components/AdminTable'
 import StatsCards from '@/components/StatsCards'
 import BookingsTable from '@/components/BookingsTable'
+import PendingApprovalsTable, { type PendingApproval } from '@/components/PendingApprovalsTable'
 
 export const dynamic = 'force-dynamic'
 
@@ -45,6 +46,7 @@ export default async function AnnulationsPage() {
     { data: notes },
     { data: attendanceRows },
     { count: cancellations30d },
+    { data: pendingApprovalsRaw },
     allBookings,
     upcomingOnly,
     monthBookings,
@@ -54,6 +56,7 @@ export default async function AnnulationsPage() {
     supabaseAdmin.from('client_notes').select('email, note'),
     supabaseAdmin.from('attendance').select('booking_id, status'),
     supabaseAdmin.from('cancellations').select('*', { count: 'exact', head: true }).gte('cancelled_at', thirtyDaysAgo.toISOString()),
+    supabaseAdmin.from('pending_approvals').select('*').order('created_at', { ascending: false }).limit(50),
     getRecentAndUpcomingBookings(),
     getUpcomingBookings(7),
     getMonthBookings(),
@@ -64,6 +67,7 @@ export default async function AnnulationsPage() {
   }
 
   const clients = buildClientSummaries(cancellations ?? [], blocked ?? [], notes ?? [])
+  const pendingApprovals = (pendingApprovalsRaw ?? []) as PendingApproval[]
   const blockedEmails = (blocked ?? []).map(b => b.email)
   const attendance = (attendanceRows ?? []) as { booking_id: string; status: 'present' | 'absent' }[]
   const attendanceMap = new Map(attendance.map(a => [a.booking_id, a.status]))
@@ -112,6 +116,10 @@ export default async function AnnulationsPage() {
             </button>
           </form>
         </div>
+
+        {pendingApprovals.length > 0 && (
+          <PendingApprovalsTable approvals={pendingApprovals} />
+        )}
 
         <StatsCards
           todayCount={todayCount}
