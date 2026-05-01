@@ -47,6 +47,15 @@ Si vous ne recevez plus d'emails de contact, vérifiez :
 1. Vos spams
 2. Votre compte EmailJS sur https://www.emailjs.com
 
+### Codes d'accès EmailJS
+
+Les trois codes nécessaires au bon fonctionnement du formulaire sont :
+- **Service ID** — visible dans EmailJS → Email Services
+- **Template ID** — visible dans EmailJS → Email Templates
+- **Public Key** — visible dans EmailJS → Account → General → Public Key
+
+En cas de transfert du site à un nouveau développeur, ces trois codes sont également stockés dans les **variables d'environnement Vercel** (Vercel → votre projet → Settings → Environment Variables).
+
 ---
 
 ## 3. L'hébergement — Vercel
