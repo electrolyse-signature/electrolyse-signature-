@@ -20,16 +20,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://electrolyse-signature.vercel.app'),
   title: 'Electrolyse Signature | Épilation permanente à Noisiel',
   description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel. Praticienne certifiée Amal. 86 avis 5/5. Prenez rendez-vous en ligne.",
-  icons: {
-    icon: '/logo.svg',
-    apple: '/logo.jpeg',
-  },
   openGraph: {
     title: 'Electrolyse Signature',
     description: 'Expert en électrolyse permanente à Noisiel, Seine-et-Marne.',
     locale: 'fr_FR',
     type: 'website',
-    images: [{ url: '/logo.jpeg', width: 1200, height: 630, alt: 'Electrolyse Signature' }],
+    images: [{ url: '/og-image.jpeg', alt: 'Electrolyse Signature' }],
   },
 }
 
