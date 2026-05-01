@@ -36,6 +36,9 @@ export default function Footer() {
         <div className="border-t border-white/10 mt-8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 font-sans text-xs text-white/40">
           <p>© {new Date().getFullYear()} Electrolyse Signature. Tous droits réservés.</p>
           <p>47 Grande Allée du 12 Février 1934, 77186 Noisiel</p>
+          <a href="/admin/annulations" className="hover:text-white/70 transition-colors">
+            Admin
+          </a>
         </div>
       </div>
     </footer>
