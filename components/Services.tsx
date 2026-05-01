@@ -123,11 +123,11 @@ export default function Services() {
                   <p className="font-sans text-text-secondary text-sm mt-1">{service.duration}</p>
                 </div>
                 <div className="text-right">
-                  <span className={`font-serif text-2xl text-blush block ${studentMode ? 'line-through opacity-40 text-lg' : ''}`}>
+                  <span className={`font-serif text-3xl font-semibold text-blush block ${studentMode ? 'line-through opacity-40 text-xl' : ''}`}>
                     {service.price}
                   </span>
                   {studentMode && (
-                    <span className="font-serif text-2xl text-amber-500">
+                    <span className="font-serif text-3xl font-semibold text-amber-500">
                       {studentPrice(service.price)}
                     </span>
                   )}
