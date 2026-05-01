@@ -11,6 +11,7 @@ function openCal(namespace: string, calLink: string) {
 
 const links = [
   { label: 'Accueil', href: '#accueil' },
+  { label: 'Qui sommes-nous ?', href: '#a-propos' },
   { label: 'Services', href: '#services' },
   { label: 'Réservation', href: '#reservation' },
   { label: 'Avis', href: '#avis' },
