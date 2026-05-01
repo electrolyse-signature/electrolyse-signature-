@@ -75,7 +75,7 @@ export default function Services() {
         {/* Grille des séances */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, i) => (
-            <div key={i} className="bg-white rounded-2xl p-6 border border-beige hover:border-blush hover:shadow-md transition-all">
+            <div key={i} className="bg-white rounded-2xl p-6 border border-beige hover:border-blush hover:shadow-md transition-all flex flex-col">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="font-serif text-xl text-text-primary">{service.name}</h3>
@@ -84,10 +84,16 @@ export default function Services() {
                 <span className="font-serif text-2xl text-blush">{service.price}</span>
               </div>
               {service.note && (
-                <p className="font-sans text-xs text-blush bg-blush/10 px-3 py-2 rounded-lg">
+                <p className="font-sans text-xs text-blush bg-blush/10 px-3 py-2 rounded-lg mb-4">
                   ℹ {service.note}
                 </p>
               )}
+              <a
+                href="#reservation"
+                className="mt-auto pt-4 text-center font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all"
+              >
+                Réserver →
+              </a>
             </div>
           ))}
         </div>
