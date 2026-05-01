@@ -40,6 +40,11 @@ export default function About() {
               Dans un cabinet moderne, chaleureux et réservé exclusivement aux femmes,
               Amal vous accompagne avec douceur, précision et bienveillance.
             </p>
+            <p>
+              Votre confort et votre sécurité sont notre priorité absolue. Entre chaque intervention,
+              un <strong className="text-text-primary font-normal">protocole complet de nettoyage et de désinfection de 20 minutes</strong> est
+              systématiquement appliqué afin de garantir une hygiène irréprochable pour chaque cliente.
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4">
