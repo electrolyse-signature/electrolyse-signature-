@@ -43,9 +43,14 @@ export default function Navigation() {
           <a href="https://www.instagram.com/electrolyse.signature/" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-text-primary transition-colors" aria-label="Instagram">
             <InstagramIcon />
           </a>
-          <a href="#reservation" className="bg-blush text-white text-sm px-5 py-2 rounded-full hover:opacity-90 transition-colors font-sans">
+          <button
+            data-cal-link="electrolyse.signature/secret"
+            data-cal-namespace="secret"
+            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            className="bg-blush text-white text-sm px-5 py-2 rounded-full hover:opacity-90 transition-colors font-sans cursor-pointer"
+          >
             Réserver
-          </a>
+          </button>
         </div>
 
         <button className="md:hidden p-2 text-text-primary" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
@@ -62,9 +67,15 @@ export default function Navigation() {
               {link.label}
             </a>
           ))}
-          <a href="#reservation" className="bg-blush text-white text-sm px-5 py-2 rounded-full text-center" onClick={() => setMenuOpen(false)}>
+          <button
+            data-cal-link="electrolyse.signature/secret"
+            data-cal-namespace="secret"
+            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            className="bg-blush text-white text-sm px-5 py-2 rounded-full text-center cursor-pointer"
+            onClick={() => setMenuOpen(false)}
+          >
             Réserver
-          </a>
+          </button>
         </div>
       )}
     </nav>

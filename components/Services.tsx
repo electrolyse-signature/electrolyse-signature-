@@ -55,12 +55,14 @@ export default function Services() {
               </div>
             ))}
           </div>
-          <a
-            href="#reservation"
-            className="inline-block w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all"
+          <button
+            data-cal-link="electrolyse.signature/secret"
+            data-cal-namespace="secret"
+            data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+            className="w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all cursor-pointer"
           >
             Réserver ma consultation gratuite →
-          </a>
+          </button>
         </div>
 
         {/* Offre étudiante */}
@@ -94,12 +96,14 @@ export default function Services() {
                   ℹ {service.note}
                 </p>
               )}
-              <a
-                href="#reservation"
-                className="mt-auto pt-4 text-center font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all"
+              <button
+                data-cal-link="electrolyse.signature/secret"
+                data-cal-namespace="secret"
+                data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'
+                className="mt-auto pt-4 text-center w-full font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all cursor-pointer"
               >
                 Réserver →
-              </a>
+              </button>
             </div>
           ))}
         </div>
