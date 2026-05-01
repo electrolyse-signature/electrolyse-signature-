@@ -48,7 +48,8 @@
       "Bash(Start-Sleep -Seconds 1)",
       "Bash(Write-Output \"done\")",
       "Bash(git checkout *)",
-      "Bash(git merge *)"
+      "Bash(git merge *)",
+      "Bash(date -v+7d +%Y-%m-%d)"
     ]
   },
   "hooks": {
