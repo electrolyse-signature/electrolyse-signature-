@@ -53,3 +53,13 @@ export interface ClientSummary {
   is_blocked: boolean
   note: string | null
 }
+
+export interface ClientHistory {
+  phone: string | null
+  totalBookings: number
+  presentCount: number
+  absentCount: number
+  services: Array<{ name: string; count: number }>
+  firstBookingDate: string | null
+  lastBookingDate: string | null
+}
