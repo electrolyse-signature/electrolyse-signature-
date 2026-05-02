@@ -18,7 +18,7 @@ import PricesSection from '@/components/PricesSection'
 type AttendanceRecord = { booking_id: string; status: 'present' | 'absent' }
 interface CAStats { reel: number; prevu: number }
 
-type Tab = 'planning' | 'clients' | 'prix'
+type Tab = 'planning' | 'clients' | 'pauses' | 'prix'
 
 export interface AdminData {
   today: string
@@ -112,6 +112,7 @@ export default function AdminLayout({
             {([
               { key: 'planning', label: 'Planning' },
               { key: 'clients',  label: `Clients${data.signaledCount > 0 ? ` (${data.signaledCount} signalée${data.signaledCount > 1 ? 's' : ''})` : ''}` },
+              { key: 'pauses',   label: 'Pauses' },
               { key: 'prix',     label: 'Prix' },
             ] as { key: Tab; label: string }[]).map(t => (
               <button
@@ -163,8 +164,6 @@ export default function AdminLayout({
               </div>
               <StatsCards caToday={data.caToday} caWeek={data.caWeek} caMonth={data.caMonth} />
             </section>
-
-            <PauseForm />
           </>
         )}
 
@@ -181,6 +180,11 @@ export default function AdminLayout({
             </div>
             <AllClientsSection />
           </section>
+        )}
+
+        {/* ── Onglet Pauses ── */}
+        {tab === 'pauses' && (
+          <PauseForm />
         )}
 
         {/* ── Onglet Prix ── */}
