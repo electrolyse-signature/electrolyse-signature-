@@ -10,7 +10,10 @@ export async function sendBlockedClientAlert({
   startTime: string | null
 }) {
   const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) return
+  if (!apiKey) {
+    console.warn('[mailer] RESEND_API_KEY non défini — email non envoyé')
+    return
+  }
 
   const dateStr = startTime
     ? new Date(startTime).toLocaleString('fr-FR', {
@@ -19,14 +22,14 @@ export async function sendBlockedClientAlert({
       })
     : 'Date inconnue'
 
-  await fetch('https://api.resend.com/emails', {
+  const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Electrolyse Signature <noreply@electrolyse-signature.vercel.app>',
+      from: 'Electrolyse Signature <onboarding@resend.dev>',
       to: ['electrolyse.signature@gmail.com'],
       subject: '⚠️ Nouvelle demande — client bloqué',
       html: `
@@ -45,4 +48,9 @@ export async function sendBlockedClientAlert({
       `,
     }),
   })
+
+  if (!res.ok) {
+    const body = await res.text()
+    console.error('[mailer] Erreur Resend:', res.status, body)
+  }
 }
