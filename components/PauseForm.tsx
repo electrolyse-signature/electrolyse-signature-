@@ -5,6 +5,7 @@ import { useState } from 'react'
 export default function PauseForm() {
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
+  const [duration, setDuration] = useState<'30' | '60'>('30')
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<'idle' | 'ok' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
@@ -19,7 +20,7 @@ export default function PauseForm() {
       const res = await fetch('/api/admin/pause', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date, time }),
+        body: JSON.stringify({ date, time, duration }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -40,9 +41,28 @@ export default function PauseForm() {
 
   return (
     <section>
-      <h2 className="text-lg font-medium text-gray-700 mb-3">Bloquer un créneau — Pause 30 min</h2>
+      <h2 className="text-lg font-medium text-gray-700 mb-3">Bloquer un créneau — Pause</h2>
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm px-6 py-5">
         <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-1">Durée</label>
+            <div className="flex rounded-lg border border-gray-200 overflow-hidden text-sm">
+              <button
+                type="button"
+                onClick={() => setDuration('30')}
+                className={`px-4 py-2 transition-colors cursor-pointer ${duration === '30' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                30 min
+              </button>
+              <button
+                type="button"
+                onClick={() => setDuration('60')}
+                className={`px-4 py-2 border-l border-gray-200 transition-colors cursor-pointer ${duration === '60' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                1 heure
+              </button>
+            </div>
+          </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">Date</label>
             <input

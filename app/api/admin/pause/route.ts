@@ -3,7 +3,11 @@ import { auth } from '@/auth'
 
 const CAL_API_BASE = 'https://api.cal.com/v2'
 const CAL_API_VERSION = '2024-08-13'
-const PAUSE_EVENT_TYPE_ID = 5564606
+
+const EVENT_TYPE_IDS: Record<string, number> = {
+  '30': 5564606,
+  '60': 5564998,
+}
 
 export async function POST(request: Request) {
   const session = await auth()
@@ -13,10 +17,12 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { date, time } = body
+  const { date, time, duration } = body
   if (!date || !time) {
     return NextResponse.json({ error: 'Date et heure requises' }, { status: 400 })
   }
+
+  const eventTypeId = EVENT_TYPE_IDS[String(duration)] ?? EVENT_TYPE_IDS['30']
 
   const start = new Date(`${date}T${time}:00`)
   if (isNaN(start.getTime())) {
@@ -34,7 +40,7 @@ export async function POST(request: Request) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      eventTypeId: PAUSE_EVENT_TYPE_ID,
+      eventTypeId,
       start: start.toISOString(),
       attendee: {
         name: 'Pause',
