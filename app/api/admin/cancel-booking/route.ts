@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   if (!apiKey) return NextResponse.json({ error: 'CAL_API_KEY missing' }, { status: 500 })
 
   // Flag this UID before calling Cal.com so the webhook knows it's admin-initiated
-  await supabaseAdmin.from('admin_cancellations').insert({ booking_uid: uid })
+  await supabaseAdmin.from('admin_cancellations').insert({ booking_uid: uid, reason })
 
   const res = await fetch(`${CAL_API_BASE}/bookings/${uid}/cancel`, {
     method: 'POST',
