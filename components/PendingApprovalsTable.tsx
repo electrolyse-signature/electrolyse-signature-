@@ -20,19 +20,36 @@ export default function PendingApprovalsTable({
   approvals: PendingApproval[]
 }) {
   const [approvals, setApprovals] = useState(initial)
+  const [loadingId, setLoadingId] = useState<string | null>(null)
+  const [errorId, setErrorId] = useState<string | null>(null)
 
   async function decide(approval: PendingApproval, action: 'approve' | 'reject') {
-    const endpoint = action === 'approve' ? '/api/admin/approve' : '/api/admin/reject'
-    await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: approval.id, booking_uid: approval.booking_uid }),
-    })
-    setApprovals(prev =>
-      prev.map(a =>
-        a.id === approval.id ? { ...a, status: action === 'approve' ? 'approved' : 'rejected' } : a
+    setLoadingId(approval.id)
+    setErrorId(null)
+    try {
+      const endpoint = action === 'approve' ? '/api/admin/approve' : '/api/admin/reject'
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: approval.id, booking_uid: approval.booking_uid }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        console.error('[PendingApprovals] error:', res.status, data)
+        setErrorId(approval.id)
+        return
+      }
+      setApprovals(prev =>
+        prev.map(a =>
+          a.id === approval.id ? { ...a, status: action === 'approve' ? 'approved' : 'rejected' } : a
+        )
       )
-    )
+    } catch (err) {
+      console.error('[PendingApprovals] fetch error:', err)
+      setErrorId(approval.id)
+    } finally {
+      setLoadingId(null)
+    }
   }
 
   const pending = approvals.filter(a => a.status === 'pending')
@@ -70,6 +87,8 @@ export default function PendingApprovalsTable({
               const timeStr = a.start_time && a.end_time
                 ? `${new Date(a.start_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })} – ${new Date(a.end_time).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
                 : '—'
+              const isLoading = loadingId === a.id
+              const hasError = errorId === a.id
 
               return (
                 <tr
@@ -92,19 +111,26 @@ export default function PendingApprovalsTable({
                   </td>
                   <td className="px-4 py-3 w-48">
                     {a.status === 'pending' ? (
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => decide(a, 'approve')}
-                          className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-200"
-                        >
-                          ✓ Approuver
-                        </button>
-                        <button
-                          onClick={() => decide(a, 'reject')}
-                          className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200"
-                        >
-                          ✗ Refuser
-                        </button>
+                      <div className="flex flex-col gap-1">
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => decide(a, 'approve')}
+                            disabled={isLoading}
+                            className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-200 disabled:opacity-50"
+                          >
+                            {isLoading ? '…' : '✓ Approuver'}
+                          </button>
+                          <button
+                            onClick={() => decide(a, 'reject')}
+                            disabled={isLoading}
+                            className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200 disabled:opacity-50"
+                          >
+                            {isLoading ? '…' : '✗ Refuser'}
+                          </button>
+                        </div>
+                        {hasError && (
+                          <span className="text-xs text-red-500">Erreur — réessaie</span>
+                        )}
                       </div>
                     ) : (
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
