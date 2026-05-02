@@ -43,10 +43,14 @@ export default function BookingsTable({
     setAttendance(prev => new Map(prev).set(String(booking.id), status))
   }
 
-  async function cancelBooking(booking: CalBooking, reason: string) {
+  async function cancelBooking(booking: CalBooking, defaultReason: string) {
     const name = booking.attendees?.[0]?.name ?? 'ce client'
-    const label = booking.attendees?.[0]?.name === 'Pause' ? 'cette pause' : `le RDV de ${name}`
-    if (!window.confirm(`Annuler ${label} ?`)) return
+    const isPauseBooking = booking.attendees?.[0]?.name === 'Pause'
+    const label = isPauseBooking ? 'cette pause' : `le RDV de ${name}`
+    const reason = isPauseBooking
+      ? (window.confirm(`Supprimer ${label} ?`) ? defaultReason : null)
+      : window.prompt(`Motif d'annulation pour ${name} (sera inclus dans le mail client) :`, defaultReason)
+    if (reason === null) return
     setCancellingId(booking.id)
     try {
       const res = await fetch('/api/admin/cancel-booking', {
