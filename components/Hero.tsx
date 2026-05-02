@@ -36,12 +36,12 @@ export default function Hero() {
           La seule méthode d&apos;épilation définitivement reconnue, entre des mains expertes.
         </p>
 
-        <button
-          onClick={() => openCal('general', 'electrolyse.signature')}
-          className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+        <a
+          href="#services"
+          className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
         >
           Prendre rendez-vous
-        </button>
+        </a>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-secondary opacity-60">

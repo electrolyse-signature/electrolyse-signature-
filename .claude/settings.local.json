@@ -64,7 +64,8 @@
       "Bash(powershell *)",
       "Bash(cat .env.local.example)",
       "Bash(cat .env)",
-      "Bash(ls -la *.env*)"
+      "Bash(ls -la *.env*)",
+      "PowerShell(Get-ChildItem -Path \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\" -Exclude node_modules -Recurse -File | Where-Object {$_.Extension -match '\\\\.\\(tsx|jsx|ts|js|html\\)$'} | Select-Object -ExpandProperty FullName)"
     ]
   },
   "hooks": {

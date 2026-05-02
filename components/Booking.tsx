@@ -23,12 +23,12 @@ export default function Booking() {
         </div>
 
         <div className="text-center">
-          <button
-            onClick={() => openCal('general', 'electrolyse.signature')}
-            className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+          <a
+            href="#services"
+            className="inline-block bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             Choisir mon créneau →
-          </button>
+          </a>
         </div>
       </div>
     </section>
