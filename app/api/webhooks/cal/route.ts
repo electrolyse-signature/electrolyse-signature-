@@ -36,6 +36,7 @@ async function handleBookingCreated(event: CalWebhookEvent) {
   if (!attendee?.email) return NextResponse.json({ ok: true })
 
   const email = attendee.email.toLowerCase()
+  if (email === ADMIN_EMAIL) return NextResponse.json({ ok: true })
 
   const { data: blockedRow } = await supabaseAdmin
     .from('blocked_clients')
