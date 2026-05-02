@@ -1,0 +1,174 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import type { CalBooking } from '@/lib/cal-api'
+import type { ClientSummary } from '@/lib/types'
+import type { PendingApproval } from '@/components/PendingApprovalsTable'
+import AdminRefresher from '@/components/AdminRefresher'
+import BookingsTable from '@/components/BookingsTable'
+import PendingApprovalsTable from '@/components/PendingApprovalsTable'
+import AdminTable from '@/components/AdminTable'
+import StatsCards from '@/components/StatsCards'
+import PlanningStats from '@/components/PlanningStats'
+import ExportCSVButton from '@/components/ExportCSVButton'
+import PauseForm from '@/components/PauseForm'
+import AdminMobileView from '@/components/AdminMobileView'
+
+type AttendanceRecord = { booking_id: string; status: 'present' | 'absent' }
+interface CAStats { reel: number; prevu: number }
+
+export interface AdminData {
+  today: string
+  bookings: CalBooking[]
+  blockedEmails: string[]
+  attendance: AttendanceRecord[]
+  pendingApprovals: PendingApproval[]
+  clients: ClientSummary[]
+  caToday: CAStats
+  caWeek: CAStats
+  caMonth: CAStats
+  todayCount: number
+  weekCount: number
+  unmarkedCount: number
+  signaledCount: number
+  cancellations30d: number | null
+}
+
+export default function AdminLayout({
+  data,
+  signOut,
+}: {
+  data: AdminData
+  signOut: () => Promise<void>
+}) {
+  const [view, setView] = useState<'desktop' | 'mobile'>('desktop')
+
+  useEffect(() => {
+    const saved = localStorage.getItem('adminView')
+    if (saved === 'desktop' || saved === 'mobile') {
+      setView(saved)
+    } else {
+      setView(window.innerWidth < 768 ? 'mobile' : 'desktop')
+    }
+  }, [])
+
+  function toggle() {
+    const next = view === 'desktop' ? 'mobile' : 'desktop'
+    setView(next)
+    localStorage.setItem('adminView', next)
+  }
+
+  if (view === 'mobile') {
+    return (
+      <AdminMobileView
+        today={data.today}
+        bookings={data.bookings}
+        blockedEmails={data.blockedEmails}
+        attendance={data.attendance}
+        pendingApprovals={data.pendingApprovals}
+        caToday={data.caToday}
+        caMonth={data.caMonth}
+        todayCount={data.todayCount}
+        weekCount={data.weekCount}
+        unmarkedCount={data.unmarkedCount}
+        onToggleView={toggle}
+        signOut={signOut}
+      />
+    )
+  }
+
+  // ── Vue bureau ──
+  return (
+    <main className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-5xl mx-auto space-y-8">
+
+        {/* En-tête */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold text-gray-900 capitalize">{data.today}</h1>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggle}
+              title="Passer en vue mobile"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 shadow-sm transition-colors"
+            >
+              <PhoneIcon />
+              Mobile
+            </button>
+            <AdminRefresher />
+            <form action={signOut}>
+              <button type="submit" className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
+                Déconnexion
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* 1. Demandes en attente */}
+        {data.pendingApprovals.length > 0 && (
+          <PendingApprovalsTable approvals={data.pendingApprovals} />
+        )}
+
+        {/* 2. Planning */}
+        <section>
+          <h2 className="text-lg font-medium text-gray-700 mb-3">
+            Planning — hier &amp; 7 prochains jours
+          </h2>
+          <PlanningStats
+            todayCount={data.todayCount}
+            weekCount={data.weekCount}
+            unmarkedCount={data.unmarkedCount}
+          />
+          <BookingsTable
+            bookings={data.bookings}
+            blockedEmails={data.blockedEmails}
+            attendance={data.attendance}
+          />
+        </section>
+
+        {/* 3. Comptabilité */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-medium text-gray-700">Comptabilité</h2>
+            <ExportCSVButton />
+          </div>
+          <StatsCards caToday={data.caToday} caWeek={data.caWeek} caMonth={data.caMonth} />
+        </section>
+
+        {/* 4. Gestion des créneaux */}
+        <PauseForm />
+
+        {/* 5. Clients */}
+        <section>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-medium text-gray-700">
+              Clients — {data.clients.length}
+            </h2>
+            <div className="flex gap-2">
+              {(data.cancellations30d ?? 0) > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-700">
+                  {data.cancellations30d} annulation{(data.cancellations30d ?? 0) > 1 ? 's' : ''} (30j)
+                </span>
+              )}
+              {data.signaledCount > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
+                  {data.signaledCount} signalé{data.signaledCount > 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+          </div>
+          <AdminTable clients={data.clients} />
+        </section>
+
+      </div>
+    </main>
+  )
+}
+
+function PhoneIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3.5 h-3.5">
+      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+      <line x1="12" y1="18" x2="12.01" y2="18"/>
+    </svg>
+  )
+}
