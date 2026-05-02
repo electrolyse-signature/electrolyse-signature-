@@ -8,7 +8,7 @@ export interface CalBooking {
   endTime: string
   duration: number
   status: string
-  attendees: Array<{ name: string; email: string }>
+  attendees: Array<{ name: string; email: string; phoneNumber?: string }>
 }
 
 const CAL_API_BASE = 'https://api.cal.com/v2'
@@ -48,9 +48,10 @@ async function fetchBookings(params: {
     endTime: b.end,
     duration: b.duration,
     status: b.status,
-    attendees: (b.attendees ?? []).map((a: { name: string; email: string }) => ({
+    attendees: (b.attendees ?? []).map((a: { name: string; email: string; phoneNumber?: string }) => ({
       name: a.name,
       email: a.email,
+      phoneNumber: a.phoneNumber ?? undefined,
     })),
   }))
 }

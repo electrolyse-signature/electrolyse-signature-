@@ -131,7 +131,14 @@ export default function BookingsTable({
                     <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap w-28">
                       {start} – {end}
                     </td>
-                    <td className="px-4 py-3 text-gray-700">{attendee?.name ?? '—'}</td>
+                    <td className="px-4 py-3">
+                      <p className="text-gray-700 font-medium">{attendee?.name ?? '—'}</p>
+                      {attendee?.phoneNumber && (
+                        <a href={`tel:${attendee.phoneNumber}`} className="text-xs text-blue-500 hover:underline">
+                          {attendee.phoneNumber}
+                        </a>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{attendee?.email ?? '—'}</td>
                     <td className="px-4 py-3 text-gray-600 hidden md:table-cell">{booking.title}</td>
                     <td className="px-4 py-3 whitespace-nowrap w-16">

@@ -223,6 +223,11 @@ export default function AdminMobileView({
                           )}
                         </div>
                         <p className="text-base font-semibold text-gray-900 truncate">{attendee?.name ?? '—'}</p>
+                        {attendee?.phoneNumber && (
+                          <a href={`tel:${attendee.phoneNumber}`} className="text-xs text-blue-500 hover:underline">
+                            {attendee.phoneNumber}
+                          </a>
+                        )}
                         <p className="text-xs text-gray-400 truncate">{booking.title}</p>
                       </div>
                       {price > 0 && (

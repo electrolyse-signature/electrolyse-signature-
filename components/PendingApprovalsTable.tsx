@@ -56,8 +56,8 @@ export default function PendingApprovalsTable({ approvals: initial }: { approval
     }
   }
 
-  const pending  = approvals.filter(a => a.status === 'pending')
-  const handled  = approvals.filter(a => a.status !== 'pending')
+  const pending = approvals.filter(a => a.status === 'pending')
+  const handled = approvals.filter(a => a.status !== 'pending')
 
   if (approvals.length === 0) return null
 
@@ -76,58 +76,48 @@ export default function PendingApprovalsTable({ approvals: initial }: { approval
       {pending.length === 0 ? (
         <p className="text-sm text-gray-400 italic px-1">Aucune demande en attente.</p>
       ) : (
-        <div className="rounded-lg border border-red-200 bg-white shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-red-50 border-b border-red-200">
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-red-700">Client</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-red-700 hidden md:table-cell">Email</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-red-700">Prestation</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-red-700">Date / Heure</th>
-                <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wide text-red-700">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {pending.map(a => {
-                const { date, time } = formatDate(a.start_time, a.end_time)
-                const isLoading = loadingId === a.id
-                const hasError  = errorId === a.id
-                return (
-                  <tr key={a.id} className="bg-yellow-50">
-                    <td className="px-4 py-3 font-medium text-gray-900">{a.name}</td>
-                    <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{a.email}</td>
-                    <td className="px-4 py-3 text-gray-600">{a.title ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
-                      <span className="capitalize">{date}</span>
-                      <br />
-                      <span className="text-xs text-gray-400">{time}</span>
-                    </td>
-                    <td className="px-4 py-3 w-48">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex gap-1">
-                          <button
-                            onClick={() => decide(a, 'approve')}
-                            disabled={isLoading}
-                            className="rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-200 disabled:opacity-50"
-                          >
-                            {isLoading ? '…' : '✓ Approuver'}
-                          </button>
-                          <button
-                            onClick={() => decide(a, 'reject')}
-                            disabled={isLoading}
-                            className="rounded bg-red-100 px-2 py-1 text-xs font-medium text-red-700 hover:bg-red-200 disabled:opacity-50"
-                          >
-                            {isLoading ? '…' : '✗ Refuser'}
-                          </button>
-                        </div>
-                        {hasError && <span className="text-xs text-red-500">Erreur — réessaie</span>}
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        <div className="space-y-2">
+          {pending.map(a => {
+            const { date, time } = formatDate(a.start_time, a.end_time)
+            const isLoading = loadingId === a.id
+            const hasError  = errorId === a.id
+            return (
+              <div key={a.id} className="rounded-xl border border-red-200 bg-yellow-50 p-4 shadow-sm">
+                {/* En-tête de la carte */}
+                <div className="flex items-start justify-between gap-4 mb-1">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 truncate">{a.name}</p>
+                    <p className="text-xs text-gray-400 truncate">{a.email}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-medium text-gray-600 capitalize">{date}</p>
+                    <p className="text-xs text-gray-400">{time}</p>
+                  </div>
+                </div>
+                {a.title && (
+                  <p className="text-sm text-gray-500 mb-3">{a.title}</p>
+                )}
+                {/* Boutons */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => decide(a, 'approve')}
+                    disabled={isLoading}
+                    className="flex-1 rounded-xl bg-green-100 py-2.5 text-sm font-semibold text-green-700 hover:bg-green-200 disabled:opacity-50 transition-colors"
+                  >
+                    {isLoading ? '…' : '✓ Approuver'}
+                  </button>
+                  <button
+                    onClick={() => decide(a, 'reject')}
+                    disabled={isLoading}
+                    className="flex-1 rounded-xl bg-red-100 py-2.5 text-sm font-semibold text-red-700 hover:bg-red-200 disabled:opacity-50 transition-colors"
+                  >
+                    {isLoading ? '…' : '✗ Refuser'}
+                  </button>
+                </div>
+                {hasError && <p className="text-xs text-red-500 mt-1.5">Erreur — réessaie</p>}
+              </div>
+            )
+          })}
         </div>
       )}
 
@@ -143,33 +133,23 @@ export default function PendingApprovalsTable({ approvals: initial }: { approval
           </button>
 
           {histOpen && (
-            <div className="mt-1 rounded-lg border border-gray-200 bg-white overflow-hidden">
-              <table className="w-full text-sm">
-                <tbody className="divide-y divide-gray-100">
-                  {handled.map(a => {
-                    const { date, time } = formatDate(a.start_time, a.end_time)
-                    return (
-                      <tr key={a.id} className="opacity-60">
-                        <td className="px-4 py-2 font-medium text-gray-700 text-xs">{a.name}</td>
-                        <td className="px-4 py-2 text-gray-400 text-xs hidden md:table-cell">{a.email}</td>
-                        <td className="px-4 py-2 text-gray-500 text-xs">{a.title ?? '—'}</td>
-                        <td className="px-4 py-2 text-gray-400 text-xs whitespace-nowrap">
-                          <span className="capitalize">{date}</span>
-                          {' · '}
-                          <span>{time}</span>
-                        </td>
-                        <td className="px-4 py-2 text-xs">
-                          <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            a.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                          }`}>
-                            {a.status === 'approved' ? '✓ Approuvé' : '✗ Refusé'}
-                          </span>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+            <div className="mt-1 space-y-1.5">
+              {handled.map(a => {
+                const { date, time } = formatDate(a.start_time, a.end_time)
+                return (
+                  <div key={a.id} className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 flex items-center justify-between gap-3 opacity-60">
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-gray-700 truncate">{a.name}</p>
+                      <p className="text-xs text-gray-400 truncate">{a.title ?? '—'} · <span className="capitalize">{date}</span> · {time}</p>
+                    </div>
+                    <span className={`shrink-0 inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                      a.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                    }`}>
+                      {a.status === 'approved' ? '✓ Approuvé' : '✗ Refusé'}
+                    </span>
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>
