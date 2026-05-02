@@ -18,7 +18,8 @@ export default function AllClientsSection() {
       .finally(() => setLoading(false))
   }, [])
 
-  const handleBlock = useCallback(async (email: string) => {
+  const handleBlock = useCallback(async (email: string, name: string) => {
+    if (!confirm(`Bloquer ${name} ?\nElle ne pourra plus réserver en ligne.`)) return
     await fetch('/api/admin/block', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -66,7 +67,7 @@ export default function AllClientsSection() {
         <ClientDetailModal
           client={currentClient}
           onClose={() => setSelected(null)}
-          onBlock={handleBlock}
+          onBlock={(email) => handleBlock(email, currentClient?.name ?? email)}
           onUnblock={handleUnblock}
           onNoteUpdate={handleNoteUpdate}
         />
@@ -181,7 +182,7 @@ export default function AllClientsSection() {
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleBlock(c.email)}
+                          onClick={() => handleBlock(c.email, c.name)}
                           className="text-xs text-red-600 hover:underline whitespace-nowrap"
                         >
                           Bloquer
