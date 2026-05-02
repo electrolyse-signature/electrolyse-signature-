@@ -139,7 +139,12 @@ export default function BookingsTable({
                         </a>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{attendee?.email ?? '—'}</td>
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      {attendee?.email
+                        ? <a href={`mailto:${attendee.email}`} className="text-gray-500 hover:text-blue-500 hover:underline">{attendee.email}</a>
+                        : <span className="text-gray-400">—</span>
+                      }
+                    </td>
                     <td className="px-4 py-3 text-gray-600 hidden md:table-cell">{booking.title}</td>
                     <td className="px-4 py-3 whitespace-nowrap w-16">
                       {price > 0 ? (
