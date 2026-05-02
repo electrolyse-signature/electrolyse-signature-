@@ -210,7 +210,7 @@ export default function PauseForm() {
             {status === 'ok' && <span className="text-sm text-green-600 font-medium">✓ {statusMsg}</span>}
             {status === 'error' && <span className="text-sm text-red-600">{statusMsg}</span>}
           </form>
-        ) : (
+        ) : mode === 'journee' ? (
           <form onSubmit={handleJourneeSubmit} className="flex flex-wrap items-end gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Date</label>
@@ -257,9 +257,7 @@ export default function PauseForm() {
             {status === 'ok' && <span className="text-sm text-green-600 font-medium">✓ {statusMsg}</span>}
             {status === 'error' && <span className="text-sm text-red-600">{statusMsg}</span>}
           </form>
-        )}
-
-        {mode === 'conges' && (
+        ) : (
           <form onSubmit={handleCongesSubmit} className="flex flex-wrap items-end gap-4">
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">Du</label>
