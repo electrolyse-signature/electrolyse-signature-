@@ -90,7 +90,7 @@ export default function AdminTable({ clients }: { clients: ClientSummary[] }) {
                   <td className="px-4 py-3 text-gray-600">{client.email}</td>
                   <td className="px-4 py-3 font-semibold">{client.cancellation_count}</td>
                   <td className="px-4 py-3 text-gray-500">
-                    {new Date(client.last_cancelled_at).toLocaleDateString('fr-FR')}
+                    {client.last_cancelled_at ? new Date(client.last_cancelled_at).toLocaleDateString('fr-FR') : '—'}
                   </td>
                   <td className="px-4 py-3 max-w-[200px]">
                     {isEditing ? (

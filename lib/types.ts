@@ -49,7 +49,9 @@ export interface ClientSummary {
   email: string
   name: string
   cancellation_count: number
-  last_cancelled_at: string
+  last_cancelled_at: string | null
+  total_bookings?: number
+  last_booking_date?: string | null
   is_blocked: boolean
   note: string | null
 }

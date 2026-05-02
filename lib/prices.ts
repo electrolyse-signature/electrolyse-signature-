@@ -1,4 +1,4 @@
-const PRICE_BY_DURATION: Record<number, number> = {
+export const DEFAULT_PRICES: Record<number, number> = {
   5: 20,
   10: 30,
   15: 40,
@@ -14,12 +14,17 @@ const PRICE_BY_DURATION: Record<number, number> = {
   90: 175,
 }
 
-export function getBookingPrice(startTime: string, endTime: string, title: string): number {
+export function getBookingPrice(
+  startTime: string,
+  endTime: string,
+  title: string,
+  prices: Record<number, number> = DEFAULT_PRICES
+): number {
   if (title.toLowerCase().includes('consultation')) return 0
   const durationMin = Math.round(
     (new Date(endTime).getTime() - new Date(startTime).getTime()) / 60000
   )
-  return PRICE_BY_DURATION[durationMin] ?? 0
+  return prices[durationMin] ?? 0
 }
 
 export function formatEuros(amount: number): string {
