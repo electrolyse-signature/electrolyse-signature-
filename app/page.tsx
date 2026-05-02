@@ -5,6 +5,7 @@ import Gallery from '@/components/Gallery'
 import Services from '@/components/Services'
 import Booking from '@/components/Booking'
 import Reviews from '@/components/Reviews'
+import FAQ from '@/components/FAQ'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -28,6 +29,7 @@ export default async function Home() {
         <Services prices={prices} />
         <Booking />
         <Reviews />
+        <FAQ />
         <Contact />
       </main>
       <Footer />

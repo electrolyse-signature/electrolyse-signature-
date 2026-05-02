@@ -17,10 +17,10 @@ export default function Gallery() {
           <p className="font-sans text-xs tracking-widest uppercase text-text-secondary mb-4">Salle de soin</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/soin-1.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <Image src="/soin-1.jpeg" alt="Cabine d'électrolyse permanente à Noisiel – Electrolyse Signature" fill className="object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/soin-3.jpeg" alt="Salle de soin" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <Image src="/soin-3.jpeg" alt="Équipement d'électrolyse permanente professionnel – cabinet Noisiel" fill className="object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>
@@ -30,10 +30,10 @@ export default function Gallery() {
           <p className="font-sans text-xs tracking-widest uppercase text-text-secondary mb-4">Salle d&apos;attente</p>
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/attente-1.jpeg" alt="Salle d'attente" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <Image src="/attente-1.jpeg" alt="Salle d'attente du cabinet Electrolyse Signature à Noisiel" fill className="object-cover hover:scale-105 transition-transform duration-500" />
             </div>
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-              <Image src="/attente-2.jpeg" alt="Salle d'attente" fill className="object-cover hover:scale-105 transition-transform duration-500" />
+              <Image src="/attente-2.jpeg" alt="Espace d'accueil cabinet d'épilation définitive Noisiel Seine-et-Marne" fill className="object-cover hover:scale-105 transition-transform duration-500" />
             </div>
           </div>
         </div>

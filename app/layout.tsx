@@ -64,18 +64,28 @@ const localBusinessSchema = {
   openingHoursSpecification: [
     { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
   ],
-  servesCuisine: undefined,
   sameAs: ['https://www.instagram.com/electrolyse.signature/'],
+}
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    { '@type': 'Question', name: "Qu'est-ce que l'électrolyse permanente ?", acceptedAnswer: { '@type': 'Answer', text: "L'électrolyse est la seule méthode d'épilation définitivement reconnue par la FDA. Elle détruit le follicule pileux par un courant électrique de très faible intensité, empêchant définitivement la repousse du poil." } },
+    { '@type': 'Question', name: "Quelle est la différence avec le laser ?", acceptedAnswer: { '@type': 'Answer', text: "Contrairement au laser, l'électrolyse fonctionne sur tous les types de poils (blonds, roux, blancs) et toutes les peaux, y compris les peaux foncées. C'est la seule méthode officiellement reconnue comme définitive." } },
+    { '@type': 'Question', name: "Combien de séances sont nécessaires ?", acceptedAnswer: { '@type': 'Answer', text: "En moyenne, il faut entre 8 et 15 séances espacées pour obtenir un résultat définitif. Un bilan est réalisé lors de la consultation initiale gratuite." } },
+    { '@type': 'Question', name: "La consultation initiale est-elle obligatoire ?", acceptedAnswer: { '@type': 'Answer', text: "Oui, la consultation initiale gratuite est obligatoire pour toute nouvelle cliente. Elle permet d'évaluer votre pilosité et d'établir un protocole de traitement personnalisé." } },
+    { '@type': 'Question', name: "Est-ce douloureux ?", acceptedAnswer: { '@type': 'Answer', text: "La sensation est comparable à un léger picotement. L'intensité est ajustée en permanence selon votre confort. La plupart des clientes tolèrent très bien les séances." } },
+    { '@type': 'Question', name: "Combien coûte une séance ?", acceptedAnswer: { '@type': 'Answer', text: "Les séances sont facturées à la durée, à partir de 20 € pour 5 minutes. La consultation initiale est entièrement gratuite." } },
+  ],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${cormorant.variable} ${lato.variable}`}>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       </head>
       <body>{children}</body>
       <Script

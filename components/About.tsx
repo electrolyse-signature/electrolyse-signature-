@@ -14,7 +14,7 @@ export default function About() {
           <div className="w-full aspect-[4/5] rounded-2xl overflow-hidden">
             <Image
               src="/soin-1.jpeg"
-              alt="Cabinet Electrolyse Signature"
+              alt="Salle de soin du cabinet d'électrolyse permanente Electrolyse Signature à Noisiel"
               fill
               className="object-cover"
             />
