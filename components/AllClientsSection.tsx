@@ -10,6 +10,13 @@ export default function AllClientsSection() {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState<'all' | 'blocked' | 'signaled'>('all')
   const [selected, setSelected] = useState<ClientSummary | null>(null)
+  const [hiddenEmails, setHiddenEmails] = useState<Set<string>>(new Set())
+  const [showHidden, setShowHidden] = useState(false)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('admin-hidden-clients')
+    if (saved) setHiddenEmails(new Set(JSON.parse(saved)))
+  }, [])
 
   useEffect(() => {
     fetch('/api/admin/clients-list')
@@ -41,8 +48,27 @@ export default function AllClientsSection() {
     setClients(prev => prev.map(c => c.email === email ? { ...c, note } : c))
   }, [])
 
+  const handleHide = useCallback((email: string) => {
+    setHiddenEmails(prev => {
+      const next = new Set(prev)
+      next.add(email)
+      localStorage.setItem('admin-hidden-clients', JSON.stringify([...next]))
+      return next
+    })
+  }, [])
+
+  const handleUnhide = useCallback((email: string) => {
+    setHiddenEmails(prev => {
+      const next = new Set(prev)
+      next.delete(email)
+      localStorage.setItem('admin-hidden-clients', JSON.stringify([...next]))
+      return next
+    })
+  }, [])
+
   const q = search.toLowerCase()
   const visible = clients.filter(c => {
+    if (!showHidden && hiddenEmails.has(c.email)) return false
     if (filter === 'blocked' && !c.is_blocked) return false
     if (filter === 'signaled' && (c.is_blocked || c.cancellation_count < 2)) return false
     if (q && !c.name.toLowerCase().includes(q) && !c.email.toLowerCase().includes(q)) return false
@@ -55,6 +81,7 @@ export default function AllClientsSection() {
 
   const blocked = clients.filter(c => c.is_blocked).length
   const signaled = clients.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
+  const hiddenCount = clients.filter(c => hiddenEmails.has(c.email)).length
 
   function fmtDate(d: string | null | undefined) {
     if (!d) return '—'
@@ -85,6 +112,14 @@ export default function AllClientsSection() {
           <span className="inline-flex rounded-full border border-orange-200 bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-700">
             {signaled} signalée{signaled > 1 ? 's' : ''}
           </span>
+        )}
+        {hiddenCount > 0 && (
+          <button
+            onClick={() => setShowHidden(v => !v)}
+            className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-medium text-gray-500 hover:bg-gray-100 transition-colors"
+          >
+            {showHidden ? `Masquer les ${hiddenCount} cachée${hiddenCount > 1 ? 's' : ''}` : `${hiddenCount} cachée${hiddenCount > 1 ? 's' : ''} — Afficher`}
+          </button>
         )}
       </div>
 
@@ -173,21 +208,38 @@ export default function AllClientsSection() {
                       </button>
                     </td>
                     <td className="px-4 py-3">
-                      {c.is_blocked ? (
-                        <button
-                          onClick={() => handleUnblock(c.email)}
-                          className="text-xs text-blue-600 hover:underline whitespace-nowrap"
-                        >
-                          Débloquer
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleBlock(c.email, c.name)}
-                          className="text-xs text-red-600 hover:underline whitespace-nowrap"
-                        >
-                          Bloquer
-                        </button>
-                      )}
+                      <div className="flex flex-col gap-1">
+                        {c.is_blocked ? (
+                          <button
+                            onClick={() => handleUnblock(c.email)}
+                            className="text-xs text-blue-600 hover:underline whitespace-nowrap text-left"
+                          >
+                            Débloquer
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBlock(c.email, c.name)}
+                            className="text-xs text-red-600 hover:underline whitespace-nowrap text-left"
+                          >
+                            Bloquer
+                          </button>
+                        )}
+                        {hiddenEmails.has(c.email) ? (
+                          <button
+                            onClick={() => handleUnhide(c.email)}
+                            className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left"
+                          >
+                            Réafficher
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleHide(c.email)}
+                            className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left"
+                          >
+                            Masquer
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
