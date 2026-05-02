@@ -45,7 +45,7 @@ export default function ExportCSVButton() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `Livre-recettes-${year}-${String(month).padStart(2, '0')}.csv`
+      a.download = `Livre-recettes-${year}-${String(month).padStart(2, '0')}.xlsx`
       a.click()
       URL.revokeObjectURL(url)
     } finally {
