@@ -10,7 +10,7 @@ import BookingsTable from '@/components/BookingsTable'
 import PendingApprovalsTable, { type PendingApproval } from '@/components/PendingApprovalsTable'
 import PauseForm from '@/components/PauseForm'
 import AdminRefresher from '@/components/AdminRefresher'
-import ExportCSVButton, { type ExportRow } from '@/components/ExportCSVButton'
+import ExportCSVButton from '@/components/ExportCSVButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -110,27 +110,6 @@ export default async function AnnulationsPage() {
     weekday: 'long', day: 'numeric', month: 'long',
   })
 
-  const monthLabel = now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-
-  const exportRows: ExportRow[] = monthBookings
-    .filter(b => {
-      const a = b.attendees?.[0]
-      return a?.name !== 'Pause' && new Date(b.startTime) < now
-    })
-    .map(b => {
-      const attendee = b.attendees?.[0]
-      const presenceStatus = attendanceMap.get(String(b.id))
-      return {
-        date: new Date(b.startTime).toLocaleDateString('fr-FR'),
-        heure: new Date(b.startTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
-        name: attendee?.name ?? '—',
-        email: attendee?.email ?? '—',
-        service: b.title,
-        price: getBookingPrice(b.startTime, b.endTime, b.title),
-        presence: presenceStatus === 'present' ? 'Présent' : presenceStatus === 'absent' ? 'Absent' : '—',
-      }
-    })
-
   return (
     <main className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto space-y-8">
@@ -169,7 +148,7 @@ export default async function AnnulationsPage() {
             <h2 className="text-lg font-medium text-gray-700">
               Planning — hier &amp; 7 prochains jours
             </h2>
-            <ExportCSVButton rows={exportRows} month={monthLabel} />
+            <ExportCSVButton />
           </div>
           <BookingsTable
             bookings={allBookings}
