@@ -133,21 +133,21 @@ export default function AdminMobileView({
         {/* ── Stats rapides ── */}
         <div className="grid grid-cols-3 gap-2">
           <div className="rounded-xl bg-white border border-gray-200 px-3 py-3 text-center">
-            <p className="text-xs text-gray-400 mb-0.5">Auj.</p>
+            <p className="text-xs text-gray-400 mb-0.5 leading-tight">RDV restants aujourd&apos;hui</p>
             <p className="text-xl font-bold text-gray-800">{todayCount}</p>
           </div>
           <div className="rounded-xl bg-white border border-gray-200 px-3 py-3 text-center">
-            <p className="text-xs text-gray-400 mb-0.5">Semaine</p>
+            <p className="text-xs text-gray-400 mb-0.5 leading-tight">À venir cette semaine</p>
             <p className="text-xl font-bold text-gray-800">{weekCount}</p>
           </div>
           {unmarkedCount > 0 ? (
             <div className="rounded-xl bg-amber-50 border border-amber-200 px-3 py-3 text-center">
-              <p className="text-xs text-amber-600 mb-0.5">À marquer</p>
+              <p className="text-xs text-amber-600 mb-0.5 leading-tight">Présence non marquée</p>
               <p className="text-xl font-bold text-amber-600">{unmarkedCount}</p>
             </div>
           ) : (
             <div className="rounded-xl bg-white border border-gray-200 px-3 py-3 text-center">
-              <p className="text-xs text-gray-400 mb-0.5">CA auj.</p>
+              <p className="text-xs text-gray-400 mb-0.5 leading-tight">CA encaissé auj.</p>
               <p className="text-lg font-bold text-emerald-600">{caToday.reel}€</p>
             </div>
           )}
