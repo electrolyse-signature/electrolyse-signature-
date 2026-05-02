@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { verifyCalSignature, extractCancellationData, CalWebhookEvent } from '@/lib/cal-webhook'
 import { supabaseAdmin } from '@/lib/supabase'
+import { sendBlockedClientAlert } from '@/lib/mailer'
 
 const AUTO_BLOCK_THRESHOLD = 3
 
@@ -44,16 +45,22 @@ async function handleBookingCreated(event: CalWebhookEvent) {
 
   if (!blockedRow) return NextResponse.json({ ok: true })
 
+  const name = attendee.name ?? ''
+  const startTime = event.payload.startTime ?? null
+  const title = event.payload.title ?? null
+
   await supabaseAdmin.from('pending_approvals').insert({
     booking_uid: event.payload.uid,
     email,
-    name: attendee.name ?? '',
-    start_time: event.payload.startTime ?? null,
+    name,
+    start_time: startTime,
     end_time: event.payload.endTime ?? null,
-    title: event.payload.title ?? null,
+    title,
     status: 'pending',
     created_at: event.createdAt ?? new Date().toISOString(),
   })
+
+  await sendBlockedClientAlert({ name, email, title, startTime })
 
   return NextResponse.json({ ok: true })
 }

@@ -87,6 +87,9 @@ export default async function AnnulationsPage() {
   ).length
   const weekCount = upcomingOnly.length
   const signaledCount = clients.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
+  const unmarkedCount = allBookings.filter(
+    b => new Date(b.startTime) < now && !attendanceMap.has(String(b.id))
+  ).length
 
   const todayBookings = monthBookings.filter(b =>
     new Date(b.startTime).toISOString().split('T')[0] === todayStr
@@ -126,6 +129,7 @@ export default async function AnnulationsPage() {
           weekCount={weekCount}
           cancellations30d={cancellations30d ?? 0}
           signaledCount={signaledCount}
+          unmarkedCount={unmarkedCount}
           caToday={caToday}
           caWeek={caWeek}
           caMonth={caMonth}
