@@ -5,6 +5,29 @@ import { supabaseAdmin } from '@/lib/supabase'
 const CAL_API_BASE = 'https://api.cal.com/v2'
 const CAL_API_VERSION = '2024-08-13'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchAllBookingsByStatus(apiKey: string, status: string): Promise<any[]> {
+  const all: any[] = [] // eslint-disable-line @typescript-eslint/no-explicit-any
+  let skip = 0
+  const take = 250
+
+  for (let page = 0; page < 10; page++) {
+    const query = new URLSearchParams({ status, take: String(take), skip: String(skip) })
+    const res = await fetch(`${CAL_API_BASE}/bookings?${query.toString()}`, {
+      headers: { Authorization: `Bearer ${apiKey}`, 'cal-api-version': CAL_API_VERSION },
+      cache: 'no-store',
+    })
+    if (!res.ok) break
+    const json = await res.json()
+    const data: any[] = json.data ?? [] // eslint-disable-line @typescript-eslint/no-explicit-any
+    all.push(...data)
+    if (data.length < take) break
+    skip += take
+  }
+
+  return all
+}
+
 export async function GET() {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -15,27 +38,16 @@ export async function GET() {
   const apiKey = process.env.CAL_API_KEY
   if (!apiKey) return NextResponse.json({ error: 'CAL_API_KEY missing' }, { status: 500 })
 
-  const twelveMonthsAgo = new Date()
-  twelveMonthsAgo.setFullYear(twelveMonthsAgo.getFullYear() - 1)
+  // Fetch all statuses in parallel — past, upcoming, cancelled
+  const [pastBookings, upcomingBookings, cancelledBookings] = await Promise.all([
+    fetchAllBookingsByStatus(apiKey, 'past'),
+    fetchAllBookingsByStatus(apiKey, 'upcoming'),
+    fetchAllBookingsByStatus(apiKey, 'cancelled'),
+  ])
 
-  const query = new URLSearchParams({
-    status: 'past',
-    startTime: twelveMonthsAgo.toISOString(),
-    endTime: new Date().toISOString(),
-    take: '250',
-  })
+  const bookings = [...pastBookings, ...upcomingBookings, ...cancelledBookings]
 
-  const res = await fetch(`${CAL_API_BASE}/bookings?${query.toString()}`, {
-    headers: { Authorization: `Bearer ${apiKey}`, 'cal-api-version': CAL_API_VERSION },
-    cache: 'no-store',
-  })
-  if (!res.ok) return NextResponse.json({ error: 'Cal.com error' }, { status: 500 })
-  const json = await res.json()
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const bookings: any[] = json.data ?? []
-
-  // Aggregate unique clients (exclude Pause)
+  // Aggregate unique clients (exclude Pause attendees)
   const clientMap = new Map<string, {
     name: string; email: string; phone?: string
     count: number; first: string; last: string
@@ -57,8 +69,8 @@ export async function GET() {
       })
     } else {
       existing.count++
-      if (start < existing.first) existing.first = start
-      if (start > existing.last) existing.last = start
+      if (start && start < existing.first) existing.first = start
+      if (start && start > existing.last) existing.last = start
       if (!existing.phone && (att.phoneNumber || b.responses?.phone)) {
         existing.phone = att.phoneNumber ?? b.responses?.phone
       }
