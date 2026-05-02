@@ -19,7 +19,6 @@ export default function BookingsTable({
   attendance: AttendanceRecord[]
 }) {
   const [bookings, setBookings] = useState(initial)
-  const [dismissed, setDismissed] = useState<Set<number>>(new Set())
   const [attendance, setAttendance] = useState<Map<string, 'present' | 'absent'>>(
     new Map(initialAttendance.map(a => [a.booking_id, a.status]))
   )
@@ -95,7 +94,6 @@ export default function BookingsTable({
                 const attendee = booking.attendees?.[0]
                 const isPause = attendee?.name === 'Pause'
                 const isBlocked = !isPause && attendee?.email ? blocked.has(attendee.email.toLowerCase()) : false
-                const isAlerted = isBlocked && !dismissed.has(booking.id)
                 const isPast = new Date(booking.startTime) < now
                 const bookingIdStr = String(booking.id)
                 const attendanceStatus = attendance.get(bookingIdStr)
@@ -125,7 +123,7 @@ export default function BookingsTable({
                 }
 
                 return (
-                  <tr key={booking.id} className={isAlerted ? 'bg-red-50' : isPast && !attendanceStatus ? 'bg-yellow-50' : ''}>
+                  <tr key={booking.id} className={isBlocked ? 'bg-red-50' : isPast && !attendanceStatus ? 'bg-yellow-50' : ''}>
                     <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap w-28">
                       {start} – {end}
                     </td>
@@ -176,15 +174,10 @@ export default function BookingsTable({
                             </button>
                           </div>
                         )
-                      ) : isAlerted ? (
-                        <button
-                          onClick={() => setDismissed(prev => new Set([...prev, booking.id]))}
-                          className="inline-flex items-center gap-1 rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200"
-                        >
-                          ⚠ Bloqué — OK
-                        </button>
                       ) : isBlocked ? (
-                        <span className="text-xs text-gray-400">Bloqué</span>
+                        <span className="inline-flex rounded-full border border-red-200 bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
+                          Bloqué
+                        </span>
                       ) : (
                         <button
                           onClick={() => cancelBooking(booking, 'Annulé par le salon')}
