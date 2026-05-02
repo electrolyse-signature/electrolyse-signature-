@@ -54,7 +54,9 @@
       "Bash(git revert *)",
       "Bash(Get-ChildItem -Path \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\components\" -Filter \"*.tsx\")",
       "Bash(Select-Object Name)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(python -m json.tool)",
+      "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(b.get\\('eventTypeId'\\), b.get\\('title'\\)\\) for b in data.get\\('data',[]\\)]\")"
     ]
   },
   "hooks": {
