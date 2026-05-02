@@ -65,7 +65,11 @@
       "Bash(cat .env.local.example)",
       "Bash(cat .env)",
       "Bash(ls -la *.env*)",
-      "PowerShell(Get-ChildItem -Path \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\" -Exclude node_modules -Recurse -File | Where-Object {$_.Extension -match '\\\\.\\(tsx|jsx|ts|js|html\\)$'} | Select-Object -ExpandProperty FullName)"
+      "PowerShell(Get-ChildItem -Path \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\" -Exclude node_modules -Recurse -File | Where-Object {$_.Extension -match '\\\\.\\(tsx|jsx|ts|js|html\\)$'} | Select-Object -ExpandProperty FullName)",
+      "WebFetch(domain:partnercare.treatwell.com)",
+      "WebFetch(domain:support.google.com)",
+      "WebFetch(domain:cal.com)",
+      "WebFetch(domain:app.cal.com)"
     ]
   },
   "hooks": {
