@@ -51,7 +51,10 @@
       "Bash(git merge *)",
       "Bash(date -v+7d +%Y-%m-%d)",
       "Bash(git rebase *)",
-      "Bash(git revert *)"
+      "Bash(git revert *)",
+      "Bash(Get-ChildItem -Path \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\components\" -Filter \"*.tsx\")",
+      "Bash(Select-Object Name)",
+      "Bash(xargs grep *)"
     ]
   },
   "hooks": {
