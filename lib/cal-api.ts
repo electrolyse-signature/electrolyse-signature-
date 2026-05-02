@@ -32,7 +32,7 @@ async function fetchBookings(params: {
       Authorization: `Bearer ${apiKey}`,
       'cal-api-version': CAL_API_VERSION,
     },
-    next: { revalidate: 0 },
+    cache: 'no-store',
   })
 
   if (!res.ok) return []

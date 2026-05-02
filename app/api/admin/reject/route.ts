@@ -30,15 +30,19 @@ export async function POST(request: Request) {
 
   const apiKey = process.env.CAL_API_KEY
   if (apiKey) {
-    await fetch(`${CAL_API_BASE}/bookings/${bookingUid}/cancel`, {
+    const cancelRes = await fetch(`${CAL_API_BASE}/bookings/${bookingUid}/cancel`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'cal-api-version': CAL_API_VERSION,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ reason: 'Client bloqué — réservation refusée par le salon' }),
+      body: JSON.stringify({ cancellationReason: 'Réservation refusée par le salon' }),
     })
+    if (!cancelRes.ok) {
+      const errData = await cancelRes.json().catch(() => ({}))
+      console.error('[reject] Cal.com cancel error:', cancelRes.status, errData)
+    }
   }
 
   return NextResponse.json({ ok: true })
