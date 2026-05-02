@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-type Mode = 'creneau' | 'journee'
+type Mode = 'creneau' | 'journee' | 'conges'
 
 export default function PauseForm() {
   const [mode, setMode] = useState<Mode>('creneau')
@@ -16,6 +16,12 @@ export default function PauseForm() {
   const [dayDate, setDayDate] = useState('')
   const [startHour, setStartHour] = useState(9)
   const [endHour, setEndHour] = useState(18)
+
+  // Congés state
+  const [congesStart, setCongesStart] = useState('')
+  const [congesEnd, setCongesEnd] = useState('')
+  const [congesStartHour, setCongesStartHour] = useState(9)
+  const [congesEndHour, setCongesEndHour] = useState(18)
 
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState<'idle' | 'ok' | 'error'>('idle')
@@ -42,6 +48,44 @@ export default function PauseForm() {
         setStatusMsg('Créneau bloqué')
         setDate('')
         setTime('')
+      }
+    } catch {
+      setStatusMsg('Erreur réseau')
+      setStatus('error')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleCongesSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!congesStart || !congesEnd || congesStart > congesEnd) {
+      setStatus('error')
+      setStatusMsg('Dates invalides')
+      return
+    }
+    if (congesStartHour >= congesEndHour) {
+      setStatus('error')
+      setStatusMsg('L\'heure de fin doit être après l\'heure de début')
+      return
+    }
+    setLoading(true)
+    setStatus('idle')
+    try {
+      const res = await fetch('/api/admin/block-period', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startDate: congesStart, endDate: congesEnd, startHour: congesStartHour, endHour: congesEndHour }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setStatusMsg(data.error ?? 'Erreur inconnue')
+        setStatus('error')
+      } else {
+        setStatus('ok')
+        setStatusMsg(`${data.days} jour${data.days > 1 ? 's' : ''} bloqué${data.days > 1 ? 's' : ''} — ${data.blocked} créneau${data.blocked > 1 ? 'x' : ''} créé${data.blocked > 1 ? 's' : ''}${data.failed > 0 ? ` (${data.failed} ignoré${data.failed > 1 ? 's' : ''})` : ''}`)
+        setCongesStart('')
+        setCongesEnd('')
       }
     } catch {
       setStatusMsg('Erreur réseau')
@@ -103,6 +147,13 @@ export default function PauseForm() {
             className={`px-4 py-2 border-l border-gray-200 transition-colors cursor-pointer ${mode === 'journee' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             Journée entière
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode('conges'); setStatus('idle') }}
+            className={`px-4 py-2 border-l border-gray-200 transition-colors cursor-pointer ${mode === 'conges' ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            Congés
           </button>
         </div>
 
@@ -208,10 +259,72 @@ export default function PauseForm() {
           </form>
         )}
 
+        {mode === 'conges' && (
+          <form onSubmit={handleCongesSubmit} className="flex flex-wrap items-end gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Du</label>
+              <input
+                type="date"
+                required
+                min={today}
+                value={congesStart}
+                onChange={e => setCongesStart(e.target.value)}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blush transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Au</label>
+              <input
+                type="date"
+                required
+                min={congesStart || today}
+                value={congesEnd}
+                onChange={e => setCongesEnd(e.target.value)}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blush transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">De</label>
+              <select
+                value={congesStartHour}
+                onChange={e => setCongesStartHour(Number(e.target.value))}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blush transition-colors"
+              >
+                {Array.from({ length: 14 }, (_, i) => i + 6).map(h => (
+                  <option key={h} value={h}>{String(h).padStart(2, '0')}h00</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">À</label>
+              <select
+                value={congesEndHour}
+                onChange={e => setCongesEndHour(Number(e.target.value))}
+                className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 outline-none focus:border-blush transition-colors"
+              >
+                {Array.from({ length: 14 }, (_, i) => i + 7).map(h => (
+                  <option key={h} value={h}>{String(h).padStart(2, '0')}h00</option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="rounded-full bg-gray-800 text-white text-sm px-5 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
+            >
+              {loading ? 'Blocage en cours…' : 'Bloquer les congés'}
+            </button>
+            {status === 'ok' && <span className="text-sm text-green-600 font-medium">✓ {statusMsg}</span>}
+            {status === 'error' && <span className="text-sm text-red-600">{statusMsg}</span>}
+          </form>
+        )}
+
         <p className="mt-3 text-xs text-gray-400">
           {mode === 'creneau'
             ? 'La pause bloquera le créneau dans Cal.com.'
-            : 'Crée des blocs d\'1h de 6h à 20h — ajuste les horaires selon ta journée.'}
+            : mode === 'journee'
+            ? 'Crée des blocs d\'1h — ajuste les horaires selon ta journée.'
+            : 'Bloque chaque jour de la période sélectionnée sur les horaires choisis.'}
         </p>
       </div>
     </section>
