@@ -44,6 +44,9 @@ export default function PendingApprovalsTable({
           a.id === approval.id ? { ...a, status: action === 'approve' ? 'approved' : 'rejected' } : a
         )
       )
+      setTimeout(() => {
+        setApprovals(prev => prev.filter(a => a.id !== approval.id))
+      }, 3000)
     } catch (err) {
       console.error('[PendingApprovals] fetch error:', err)
       setErrorId(approval.id)

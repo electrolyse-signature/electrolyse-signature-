@@ -10,7 +10,7 @@ interface AttendanceRecord {
 }
 
 export default function BookingsTable({
-  bookings,
+  bookings: initial,
   blockedEmails,
   attendance: initialAttendance,
 }: {
@@ -18,10 +18,12 @@ export default function BookingsTable({
   blockedEmails: string[]
   attendance: AttendanceRecord[]
 }) {
+  const [bookings, setBookings] = useState(initial)
   const [dismissed, setDismissed] = useState<Set<number>>(new Set())
   const [attendance, setAttendance] = useState<Map<string, 'present' | 'absent'>>(
     new Map(initialAttendance.map(a => [a.booking_id, a.status]))
   )
+  const [cancellingId, setCancellingId] = useState<number | null>(null)
   const blocked = new Set(blockedEmails)
   const now = new Date()
 
@@ -40,6 +42,25 @@ export default function BookingsTable({
       }),
     })
     setAttendance(prev => new Map(prev).set(String(booking.id), status))
+  }
+
+  async function cancelBooking(booking: CalBooking, reason: string) {
+    const name = booking.attendees?.[0]?.name ?? 'ce client'
+    const label = booking.attendees?.[0]?.name === 'Pause' ? 'cette pause' : `le RDV de ${name}`
+    if (!window.confirm(`Annuler ${label} ?`)) return
+    setCancellingId(booking.id)
+    try {
+      const res = await fetch('/api/admin/cancel-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid: booking.uid, reason }),
+      })
+      if (res.ok) {
+        setBookings(prev => prev.filter(b => b.id !== booking.id))
+      }
+    } finally {
+      setCancellingId(null)
+    }
   }
 
   // Group by day
@@ -80,14 +101,25 @@ export default function BookingsTable({
                 const attendanceStatus = attendance.get(bookingIdStr)
                 const start = new Date(booking.startTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
                 const end = new Date(booking.endTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-
                 const price = getBookingPrice(booking.startTime, booking.endTime, booking.title)
+                const isCancelling = cancellingId === booking.id
 
                 if (isPause) {
                   return (
                     <tr key={booking.id} className="bg-gray-100">
                       <td className="px-4 py-3 font-medium text-gray-500 whitespace-nowrap w-28">{start} – {end}</td>
-                      <td colSpan={5} className="px-4 py-3 text-gray-400 italic text-sm">— Pause —</td>
+                      <td colSpan={4} className="px-4 py-3 text-gray-400 italic text-sm">— Pause —</td>
+                      <td className="px-4 py-3 w-40">
+                        {!isPast && (
+                          <button
+                            onClick={() => cancelBooking(booking, 'Pause annulée')}
+                            disabled={isCancelling}
+                            className="rounded bg-gray-200 px-2 py-0.5 text-xs font-medium text-gray-600 hover:bg-gray-300 disabled:opacity-50"
+                          >
+                            {isCancelling ? '…' : '✕ Supprimer'}
+                          </button>
+                        )}
+                      </td>
                     </tr>
                   )
                 }
@@ -153,7 +185,15 @@ export default function BookingsTable({
                         </button>
                       ) : isBlocked ? (
                         <span className="text-xs text-gray-400">Bloqué</span>
-                      ) : null}
+                      ) : (
+                        <button
+                          onClick={() => cancelBooking(booking, 'Annulé par le salon')}
+                          disabled={isCancelling}
+                          className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                        >
+                          {isCancelling ? '…' : 'Annuler'}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )

@@ -2,6 +2,7 @@ import 'server-only'
 
 export interface CalBooking {
   id: number
+  uid: string
   title: string
   startTime: string
   endTime: string
@@ -41,6 +42,7 @@ async function fetchBookings(params: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (json.data ?? []).map((b: any) => ({
     id: b.id,
+    uid: b.uid,
     title: b.title,
     startTime: b.start,
     endTime: b.end,
