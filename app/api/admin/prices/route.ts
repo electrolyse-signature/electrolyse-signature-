@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 import { DEFAULT_PRICES } from '@/lib/prices'
@@ -35,5 +36,6 @@ export async function POST(request: Request) {
     .upsert(rows, { onConflict: 'duration_minutes' })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  revalidatePath('/')
   return NextResponse.json({ ok: true })
 }

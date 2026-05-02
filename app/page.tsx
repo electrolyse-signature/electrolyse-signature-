@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic'
-
 import Navigation from '@/components/Navigation'
 import Hero from '@/components/Hero'
 import About from '@/components/About'
