@@ -179,9 +179,18 @@ export default function BookingsTable({
                           </div>
                         )
                       ) : isBlocked ? (
-                        <span className="inline-flex rounded-full border border-red-200 bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
-                          Bloqué
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="inline-flex rounded-full border border-red-200 bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
+                            Bloqué
+                          </span>
+                          <button
+                            onClick={() => cancelBooking(booking, 'Annulé par le salon')}
+                            disabled={isCancelling}
+                            className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 hover:bg-gray-200 disabled:opacity-50"
+                          >
+                            {isCancelling ? '…' : 'Annuler'}
+                          </button>
+                        </div>
                       ) : (
                         <button
                           onClick={() => cancelBooking(booking, 'Annulé par le salon')}
