@@ -1,11 +1,6 @@
 'use client'
 
-function openCal(namespace: string, calLink: string) {
-  const Cal = (window as any).Cal
-  if (Cal?.ns?.[namespace]) {
-    Cal.ns[namespace]('modal', { calLink })
-  }
-}
+import BookingGate from '@/components/BookingGate'
 
 export default function Hero() {
   return (
@@ -36,12 +31,11 @@ export default function Hero() {
           La seule méthode d&apos;épilation définitivement reconnue, entre des mains expertes.
         </p>
 
-        <button
-          onClick={() => openCal('general', 'electrolyse.signature')}
-          className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
-        >
-          Prendre rendez-vous
-        </button>
+        <BookingGate namespace="general" calLink="electrolyse.signature">
+          <button className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
+            Prendre rendez-vous
+          </button>
+        </BookingGate>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-secondary opacity-60">
