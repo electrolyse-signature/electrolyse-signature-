@@ -61,7 +61,10 @@
       "Bash(findstr \"pause-30-minutes\\\\|\\\\\"id\\\\\"\" \"C:\\\\Users\\\\Cruzaider\\\\.claude\\\\projects\\\\A--Users-Cruzaider-Desktop-Site-amal\\\\3dff50c4-c5b9-44e4-a5ce-71c33de73343\\\\tool-results\\\\bid2c6jti.txt\")",
       "Bash(PowerShell -Command \"Select-String -Path 'C:\\\\Users\\\\Cruzaider\\\\.claude\\\\projects\\\\A--Users-Cruzaider-Desktop-Site-amal\\\\3dff50c4-c5b9-44e4-a5ce-71c33de73343\\\\tool-results\\\\bid2c6jti.txt' -Pattern 'pause' -SimpleMatch | Select-Object -ExpandProperty Line\")",
       "PowerShell(Get-Content *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(cat .env.local.example)",
+      "Bash(cat .env)",
+      "Bash(ls -la *.env*)"
     ]
   },
   "hooks": {
