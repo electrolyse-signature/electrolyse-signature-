@@ -16,22 +16,67 @@ const lato = Lato({
   variable: '--font-lato',
 })
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://electrolyse-signature.vercel.app'
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://electrolyse-signature.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   title: 'Electrolyse Signature | Épilation permanente à Noisiel',
   description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel. Praticienne certifiée Amal. 86 avis 5/5. Prenez rendez-vous en ligne.",
+  keywords: ['électrolyse', 'électrolyse permanente', 'épilation définitive', 'Noisiel', 'Seine-et-Marne', 'épilation permanente', 'cabinet électrolyse', 'électrolyse femme'],
+  alternates: { canonical: SITE_URL },
+  robots: { index: true, follow: true },
   openGraph: {
-    title: 'Electrolyse Signature',
-    description: 'Expert en électrolyse permanente à Noisiel, Seine-et-Marne.',
+    title: 'Electrolyse Signature | Épilation permanente à Noisiel',
+    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel. Praticienne certifiée Amal. 86 avis 5/5.",
     locale: 'fr_FR',
     type: 'website',
-    images: [{ url: '/og-image.jpeg', alt: 'Electrolyse Signature' }],
+    url: SITE_URL,
+    images: [{ url: '/og-image.jpeg', alt: 'Electrolyse Signature – Épilation permanente à Noisiel' }],
   },
+}
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BeautySalon',
+  name: 'Electrolyse Signature',
+  description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel, Seine-et-Marne.",
+  url: SITE_URL,
+  telephone: '+33769832944',
+  email: 'electrolyse.signature@gmail.com',
+  priceRange: '€€',
+  image: `${SITE_URL}/og-image.jpeg`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Noisiel',
+    addressRegion: 'Seine-et-Marne',
+    addressCountry: 'FR',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 48.8442,
+    longitude: 2.6275,
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '5',
+    reviewCount: '86',
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
+  ],
+  servesCuisine: undefined,
+  sameAs: ['https://www.instagram.com/electrolyse.signature/'],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr" className={`${cormorant.variable} ${lato.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+        />
+      </head>
       <body>{children}</body>
       <Script
         id="cal-init"
