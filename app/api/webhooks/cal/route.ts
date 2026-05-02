@@ -82,6 +82,18 @@ async function handleBookingCancelled(event: CalWebhookEvent) {
 
   if (rejected) return NextResponse.json({ ok: true })
 
+  // Ignore cancellations initiated by the admin from the planning dashboard
+  const { data: adminCancel } = await supabaseAdmin
+    .from('admin_cancellations')
+    .select('booking_uid')
+    .eq('booking_uid', event.payload.uid)
+    .maybeSingle()
+
+  if (adminCancel) {
+    await supabaseAdmin.from('admin_cancellations').delete().eq('booking_uid', event.payload.uid)
+    return NextResponse.json({ ok: true })
+  }
+
   const data = extractCancellationData(event)
   if (!data) {
     return NextResponse.json({ error: 'Missing attendee data' }, { status: 400 })
