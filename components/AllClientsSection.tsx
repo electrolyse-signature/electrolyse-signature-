@@ -126,6 +126,7 @@ export default function AllClientsSection() {
                 <th className="px-4 py-3 hidden md:table-cell">Total RDV</th>
                 <th className="px-4 py-3 hidden lg:table-cell">Dernier RDV</th>
                 <th className="px-4 py-3">Note</th>
+                <th className="px-4 py-3">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -169,6 +170,23 @@ export default function AllClientsSection() {
                           <span className="italic">Ajouter…</span>
                         )}
                       </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      {c.is_blocked ? (
+                        <button
+                          onClick={() => handleUnblock(c.email)}
+                          className="text-xs text-blue-600 hover:underline whitespace-nowrap"
+                        >
+                          Débloquer
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleBlock(c.email)}
+                          className="text-xs text-red-600 hover:underline whitespace-nowrap"
+                        >
+                          Bloquer
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )
