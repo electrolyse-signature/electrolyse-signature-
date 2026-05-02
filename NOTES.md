@@ -6,7 +6,7 @@
 
 La constante `ADMIN_FROM_DATE` définit la date de départ à partir de laquelle les données sont affichées dans l'admin. Tout ce qui est antérieur à cette date est complètement invisible (aucune trace, aucun badge).
 
-**Valeur actuelle :** `2026-06-01` (1er juin 2026)
+**Valeur actuelle :** `2026-05-01` (1er mai 2026)
 
 **Composants concernés :**
 - `components/AllClientsSection.tsx` — liste des clientes
@@ -14,7 +14,7 @@ La constante `ADMIN_FROM_DATE` définit la date de départ à partir de laquelle
 
 **Pour changer la date**, modifier uniquement cette ligne dans `lib/admin-config.ts` :
 ```ts
-export const ADMIN_FROM_DATE = '2026-06-01' // format YYYY-MM-DD
+export const ADMIN_FROM_DATE = '2026-05-01' // format YYYY-MM-DD
 ```
 
 **Pourquoi cette date ?**
