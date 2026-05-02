@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import type { CalBooking } from '@/lib/cal-api'
+import type { ClientSummary } from '@/lib/types'
 import { getBookingPrice } from '@/lib/prices'
+import ClientDetailModal from '@/components/ClientDetailModal'
 
 interface AttendanceRecord {
   booking_id: string
@@ -23,7 +25,48 @@ export default function BookingsTable({
     new Map(initialAttendance.map(a => [a.booking_id, a.status]))
   )
   const [cancellingId, setCancellingId] = useState<number | null>(null)
+  const [selectedClient, setSelectedClient] = useState<ClientSummary | null>(null)
   const blocked = new Set(blockedEmails)
+
+  async function openClient(attendee: { name: string; email: string }) {
+    const email = attendee.email.toLowerCase()
+    const res = await fetch(`/api/admin/client-summary?email=${encodeURIComponent(email)}`)
+    const data = res.ok ? await res.json() : {}
+    setSelectedClient({
+      name: attendee.name,
+      email,
+      is_blocked: data.is_blocked ?? blocked.has(email),
+      cancellation_count: data.cancellation_count ?? 0,
+      last_cancelled_at: data.last_cancelled_at ?? null,
+      note: data.note ?? null,
+    })
+  }
+
+  function handleBlockUpdate(email: string, is_blocked: boolean) {
+    setSelectedClient(prev => prev?.email === email ? { ...prev, is_blocked } : prev)
+  }
+
+  function handleNoteUpdate(email: string, note: string) {
+    setSelectedClient(prev => prev?.email === email ? { ...prev, note } : prev)
+  }
+
+  async function handleBlock(email: string) {
+    await fetch('/api/admin/block', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    handleBlockUpdate(email, true)
+  }
+
+  async function handleUnblock(email: string) {
+    await fetch('/api/admin/unblock', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    handleBlockUpdate(email, false)
+  }
   const now = new Date()
 
   async function markAttendance(booking: CalBooking, status: 'present' | 'absent') {
@@ -86,6 +129,16 @@ export default function BookingsTable({
   }
 
   return (
+    <>
+    {selectedClient && (
+      <ClientDetailModal
+        client={selectedClient}
+        onClose={() => setSelectedClient(null)}
+        onBlock={handleBlock}
+        onUnblock={handleUnblock}
+        onNoteUpdate={handleNoteUpdate}
+      />
+    )}
     <div className="space-y-4">
       {Array.from(byDay.entries()).map(([day, dayBookings]) => (
         <div key={day} className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
@@ -132,7 +185,16 @@ export default function BookingsTable({
                       {start} – {end}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-gray-700 font-medium">{attendee?.name ?? '—'}</p>
+                      {attendee?.email ? (
+                        <button
+                          onClick={() => openClient(attendee as { name: string; email: string })}
+                          className="text-gray-700 font-medium hover:underline hover:text-blush text-left"
+                        >
+                          {attendee.name ?? '—'}
+                        </button>
+                      ) : (
+                        <p className="text-gray-700 font-medium">{attendee?.name ?? '—'}</p>
+                      )}
                       {attendee?.phoneNumber && (
                         <a href={`tel:${attendee.phoneNumber}`} className="text-xs text-blue-500 hover:underline">
                           {attendee.phoneNumber}
@@ -221,5 +283,6 @@ export default function BookingsTable({
         </div>
       ))}
     </div>
+    </>
   )
 }
