@@ -2,13 +2,6 @@
 
 import { useState, useEffect } from 'react'
 
-function openCal(namespace: string, calLink: string) {
-  const Cal = (window as any).Cal
-  if (Cal?.ns?.[namespace]) {
-    Cal.ns[namespace]('modal', { calLink })
-  }
-}
-
 const links = [
   { label: 'Accueil', href: '#accueil' },
   { label: 'Qui sommes-nous ?', href: '#a-propos' },

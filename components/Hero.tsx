@@ -1,12 +1,5 @@
 'use client'
 
-function openCal(namespace: string, calLink: string) {
-  const Cal = (window as any).Cal
-  if (Cal?.ns?.[namespace]) {
-    Cal.ns[namespace]('modal', { calLink })
-  }
-}
-
 export default function Hero() {
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden"

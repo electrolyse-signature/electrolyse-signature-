@@ -1,12 +1,5 @@
 'use client'
 
-function openCal(namespace: string, calLink: string) {
-  const Cal = (window as any).Cal
-  if (Cal?.ns?.[namespace]) {
-    Cal.ns[namespace]('modal', { calLink })
-  }
-}
-
 export default function Booking() {
   return (
     <section id="reservation" className="section-padding bg-white">
