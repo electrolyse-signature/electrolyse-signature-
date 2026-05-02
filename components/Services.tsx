@@ -5,21 +5,33 @@ import { Service } from '@/lib/types'
 
 const NS = 'seance-electrolyse-20'
 
-const services: Service[] = [
-  { name: 'Séance électrolyse', duration: '5 min',  price: '20 €',  calLink: 'electrolyse.signature/seance-electrolyse-20',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '10 min', price: '30 €',  calLink: 'electrolyse.signature/seance-electrolyse-30',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '15 min', price: '40 €',  calLink: 'electrolyse.signature/seance-electrolyse-40',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '20 min', price: '55 €',  calLink: 'electrolyse.signature/seance-electrolyse-55',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '25 min', price: '65 €',  calLink: 'electrolyse.signature/seance-electrolyse-65',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '30 min', price: '75 €',  calLink: 'electrolyse.signature/seance-electrolyse-75',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '35 min', price: '85 €',  calLink: 'electrolyse.signature/seance-electrolyse-85',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '40 min', price: '90 €',  calLink: 'electrolyse.signature/seance-electrolyse-90',  calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '45 min', price: '100 €', calLink: 'electrolyse.signature/seance-electrolyse-100', calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '50 min', price: '110 €', calLink: 'electrolyse.signature/seance-electrolyse-110', calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '55 min', price: '120 €', calLink: 'electrolyse.signature/seance-electrolyse-120', calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '1h',     price: '130 €', calLink: 'electrolyse.signature/seance-electrolyse-130', calNamespace: NS },
-  { name: 'Séance électrolyse', duration: '1h30',   price: '175 €', calLink: 'electrolyse.signature/seance-electrolyse-175', calNamespace: NS },
+const SERVICE_META: { duration: number; label: string; calLink: string; calNamespace: string }[] = [
+  { duration: 5,  label: '5 min',  calLink: 'electrolyse.signature/seance-electrolyse-20',  calNamespace: NS },
+  { duration: 10, label: '10 min', calLink: 'electrolyse.signature/seance-electrolyse-30',  calNamespace: NS },
+  { duration: 15, label: '15 min', calLink: 'electrolyse.signature/seance-electrolyse-40',  calNamespace: NS },
+  { duration: 20, label: '20 min', calLink: 'electrolyse.signature/seance-electrolyse-55',  calNamespace: NS },
+  { duration: 25, label: '25 min', calLink: 'electrolyse.signature/seance-electrolyse-65',  calNamespace: NS },
+  { duration: 30, label: '30 min', calLink: 'electrolyse.signature/seance-electrolyse-75',  calNamespace: NS },
+  { duration: 35, label: '35 min', calLink: 'electrolyse.signature/seance-electrolyse-85',  calNamespace: NS },
+  { duration: 40, label: '40 min', calLink: 'electrolyse.signature/seance-electrolyse-90',  calNamespace: NS },
+  { duration: 45, label: '45 min', calLink: 'electrolyse.signature/seance-electrolyse-100', calNamespace: NS },
+  { duration: 50, label: '50 min', calLink: 'electrolyse.signature/seance-electrolyse-110', calNamespace: NS },
+  { duration: 55, label: '55 min', calLink: 'electrolyse.signature/seance-electrolyse-120', calNamespace: NS },
+  { duration: 60, label: '1h',     calLink: 'electrolyse.signature/seance-electrolyse-130', calNamespace: NS },
+  { duration: 90, label: '1h30',   calLink: 'electrolyse.signature/seance-electrolyse-175', calNamespace: NS },
 ]
+
+function buildServices(prices: Record<number, number>): Service[] {
+  return SERVICE_META
+    .filter(m => prices[m.duration] !== undefined)
+    .map(m => ({
+      name: 'Séance électrolyse',
+      duration: m.label,
+      price: `${prices[m.duration]} €`,
+      calLink: m.calLink,
+      calNamespace: m.calNamespace,
+    }))
+}
 
 function studentPrice(price: string): string {
   const num = parseFloat(price.replace(' €', '').replace(',', '.'))
@@ -34,8 +46,9 @@ function openCal(namespace: string, calLink: string) {
   }
 }
 
-export default function Services() {
+export default function Services({ prices }: { prices: Record<number, number> }) {
   const [studentMode, setStudentMode] = useState(false)
+  const services = buildServices(prices)
 
   return (
     <section id="services" className="section-padding bg-bg">
