@@ -65,7 +65,12 @@ async function handleBookingCreated(event: CalWebhookEvent) {
   return NextResponse.json({ ok: true })
 }
 
+const ADMIN_EMAIL = 'electrolyse.signature@gmail.com'
+
 async function handleBookingCancelled(event: CalWebhookEvent) {
+  const attendeeEmail = event.payload?.attendees?.[0]?.email?.toLowerCase() ?? ''
+  if (attendeeEmail === ADMIN_EMAIL) return NextResponse.json({ ok: true })
+
   // Ignore cancellations triggered by the salon rejecting a blocked client's booking
   const { data: rejected } = await supabaseAdmin
     .from('pending_approvals')
