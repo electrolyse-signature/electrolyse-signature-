@@ -9,16 +9,16 @@ import BookingsTable from '@/components/BookingsTable'
 import PendingApprovalsTable from '@/components/PendingApprovalsTable'
 import StatsCards from '@/components/StatsCards'
 import PlanningStats from '@/components/PlanningStats'
-import ExportCSVButton from '@/components/ExportCSVButton'
 import PauseForm from '@/components/PauseForm'
 import AdminMobileView from '@/components/AdminMobileView'
 import AllClientsSection from '@/components/AllClientsSection'
 import PricesSection from '@/components/PricesSection'
+import ComptaSection from '@/components/ComptaSection'
 
 type AttendanceRecord = { booking_id: string; status: 'present' | 'absent' }
 interface CAStats { reel: number; prevu: number }
 
-type Tab = 'planning' | 'clients' | 'pauses' | 'prix'
+type Tab = 'planning' | 'clients' | 'compta' | 'pauses' | 'prix'
 
 export interface AdminData {
   today: string
@@ -71,6 +71,7 @@ export default function AdminLayout({
         attendance={data.attendance}
         pendingApprovals={data.pendingApprovals}
         caToday={data.caToday}
+        caWeek={data.caWeek}
         caMonth={data.caMonth}
         todayCount={data.todayCount}
         weekCount={data.weekCount}
@@ -112,6 +113,7 @@ export default function AdminLayout({
             {([
               { key: 'planning', label: 'Planning' },
               { key: 'clients',  label: `Clients${data.signaledCount > 0 ? ` (${data.signaledCount} signalée${data.signaledCount > 1 ? 's' : ''})` : ''}` },
+              { key: 'compta',   label: 'Comptabilité' },
               { key: 'pauses',   label: 'Pauses' },
               { key: 'prix',     label: 'Prix' },
             ] as { key: Tab; label: string }[]).map(t => (
@@ -157,13 +159,6 @@ export default function AdminLayout({
               />
             </section>
 
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-medium text-gray-700">Comptabilité</h2>
-                <ExportCSVButton />
-              </div>
-              <StatsCards caToday={data.caToday} caWeek={data.caWeek} caMonth={data.caMonth} />
-            </section>
           </>
         )}
 
@@ -179,6 +174,14 @@ export default function AdminLayout({
               )}
             </div>
             <AllClientsSection />
+          </section>
+        )}
+
+        {/* ── Onglet Comptabilité ── */}
+        {tab === 'compta' && (
+          <section>
+            <h2 className="text-lg font-medium text-gray-700 mb-6">Comptabilité</h2>
+            <ComptaSection caToday={data.caToday} caWeek={data.caWeek} caMonth={data.caMonth} />
           </section>
         )}
 

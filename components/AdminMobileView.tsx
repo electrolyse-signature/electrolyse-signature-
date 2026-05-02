@@ -9,12 +9,13 @@ import AdminRefresher from '@/components/AdminRefresher'
 import AllClientsSection from '@/components/AllClientsSection'
 import PauseForm from '@/components/PauseForm'
 import PricesSection from '@/components/PricesSection'
+import ComptaSection from '@/components/ComptaSection'
 import ClientDetailModal from '@/components/ClientDetailModal'
 import { getBookingPrice } from '@/lib/prices'
 
 type AttendanceRecord = { booking_id: string; status: 'present' | 'absent' }
 interface CAStats { reel: number; prevu: number }
-type MobileTab = 'planning' | 'clients' | 'pauses' | 'prix'
+type MobileTab = 'planning' | 'clients' | 'compta' | 'pauses' | 'prix'
 
 interface Props {
   today: string
@@ -23,6 +24,7 @@ interface Props {
   attendance: AttendanceRecord[]
   pendingApprovals: PendingApproval[]
   caToday: CAStats
+  caWeek: CAStats
   caMonth: CAStats
   todayCount: number
   weekCount: number
@@ -33,7 +35,7 @@ interface Props {
 
 export default function AdminMobileView({
   today, bookings: initial, blockedEmails, attendance: initialAttendance,
-  pendingApprovals, caToday, caMonth, todayCount, weekCount, unmarkedCount,
+  pendingApprovals, caToday, caWeek, caMonth, todayCount, weekCount, unmarkedCount,
   onToggleView, signOut,
 }: Props) {
   const [tab, setTab] = useState<MobileTab>('planning')
@@ -133,6 +135,7 @@ export default function AdminMobileView({
   const tabs: { key: MobileTab; label: string; icon: React.ReactNode }[] = [
     { key: 'planning', label: 'Planning', icon: <CalIcon /> },
     { key: 'clients',  label: 'Clients',  icon: <UsersIcon /> },
+    { key: 'compta',   label: 'Compta',   icon: <ChartIcon /> },
     { key: 'pauses',   label: 'Pauses',   icon: <PauseIcon /> },
     { key: 'prix',     label: 'Prix',     icon: <TagIcon /> },
   ]
@@ -369,8 +372,16 @@ export default function AdminMobileView({
             </>
           )}
 
-          {/* ── Clients ── */}
+              {/* ── Clients ── */}
           {tab === 'clients' && <AllClientsSection />}
+
+          {/* ── Comptabilité ── */}
+          {tab === 'compta' && (
+            <section>
+              <h2 className="text-base font-semibold text-gray-800 mb-4">Comptabilité</h2>
+              <ComptaSection caToday={caToday} caWeek={caWeek} caMonth={caMonth} />
+            </section>
+          )}
 
           {/* ── Pauses ── */}
           {tab === 'pauses' && <PauseForm />}
@@ -388,7 +399,7 @@ export default function AdminMobileView({
 
       {/* ── Barre de navigation en bas ── */}
       <div className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-10">
-        <div className="grid grid-cols-4 h-16">
+        <div className="grid grid-cols-5 h-16">
           {tabs.map(t => (
             <button
               key={t.key}
@@ -408,6 +419,9 @@ export default function AdminMobileView({
   )
 }
 
+function ChartIcon() {
+  return <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+}
 function CalIcon() {
   return <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 }
