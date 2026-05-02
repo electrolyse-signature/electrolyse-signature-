@@ -29,7 +29,6 @@ it('ClientSummary type has required fields', () => {
     cancellation_count: 3,
     last_cancelled_at: '2026-05-01T00:00:00Z',
     is_blocked: false,
-    note: null,
   }
   expect(s.cancellation_count).toBe(3)
 })

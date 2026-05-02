@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Service } from '@/lib/types'
-import BookingGate from '@/components/BookingGate'
 
 const NS = 'seance-electrolyse-20'
 
@@ -28,6 +27,12 @@ function studentPrice(price: string): string {
   return discounted % 1 === 0 ? `${discounted} €` : `${discounted.toFixed(2).replace('.', ',')} €`
 }
 
+function openCal(namespace: string, calLink: string) {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.[namespace]) {
+    Cal.ns[namespace]('modal', { calLink })
+  }
+}
 
 export default function Services() {
   const [studentMode, setStudentMode] = useState(false)
@@ -70,11 +75,12 @@ export default function Services() {
               </div>
             ))}
           </div>
-          <BookingGate namespace="secret" calLink="electrolyse.signature/secret">
-            <button className="w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all cursor-pointer">
-              Réserver ma consultation gratuite →
-            </button>
-          </BookingGate>
+          <button
+            onClick={() => openCal('secret', 'electrolyse.signature/secret')}
+            className="w-full text-center font-sans text-sm text-blush border border-blush rounded-xl py-3 hover:bg-blush hover:text-white transition-all cursor-pointer"
+          >
+            Réserver ma consultation gratuite →
+          </button>
         </div>
 
         {/* Offre étudiante */}
@@ -132,11 +138,12 @@ export default function Services() {
                   ℹ {service.note}
                 </p>
               )}
-              <BookingGate namespace={service.calNamespace!} calLink={service.calLink!}>
-                <button className="mt-auto pt-4 text-center w-full font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all cursor-pointer">
-                  Réserver →
-                </button>
-              </BookingGate>
+              <button
+                onClick={() => openCal(service.calNamespace!, service.calLink!)}
+                className="mt-auto pt-4 text-center w-full font-sans text-sm text-blush border border-blush rounded-xl py-2 hover:bg-blush hover:text-white transition-all cursor-pointer"
+              >
+                Réserver →
+              </button>
             </div>
           ))}
         </div>

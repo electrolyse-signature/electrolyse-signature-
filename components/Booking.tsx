@@ -1,6 +1,11 @@
 'use client'
 
-import BookingGate from '@/components/BookingGate'
+function openCal(namespace: string, calLink: string) {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.[namespace]) {
+    Cal.ns[namespace]('modal', { calLink })
+  }
+}
 
 export default function Booking() {
   return (
@@ -18,11 +23,12 @@ export default function Booking() {
         </div>
 
         <div className="text-center">
-          <BookingGate namespace="general" calLink="electrolyse.signature">
-            <button className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
-              Choisir mon créneau →
-            </button>
-          </BookingGate>
+          <button
+            onClick={() => openCal('general', 'electrolyse.signature')}
+            className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+          >
+            Choisir mon créneau →
+          </button>
         </div>
       </div>
     </section>
