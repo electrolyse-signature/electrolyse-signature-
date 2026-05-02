@@ -60,7 +60,8 @@
       "Bash(python -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(et['id'], et['slug'], et['length']\\) for g in data['data']['eventTypeGroups'] for et in g['eventTypes']]\")",
       "Bash(findstr \"pause-30-minutes\\\\|\\\\\"id\\\\\"\" \"C:\\\\Users\\\\Cruzaider\\\\.claude\\\\projects\\\\A--Users-Cruzaider-Desktop-Site-amal\\\\3dff50c4-c5b9-44e4-a5ce-71c33de73343\\\\tool-results\\\\bid2c6jti.txt\")",
       "Bash(PowerShell -Command \"Select-String -Path 'C:\\\\Users\\\\Cruzaider\\\\.claude\\\\projects\\\\A--Users-Cruzaider-Desktop-Site-amal\\\\3dff50c4-c5b9-44e4-a5ce-71c33de73343\\\\tool-results\\\\bid2c6jti.txt' -Pattern 'pause' -SimpleMatch | Select-Object -ExpandProperty Line\")",
-      "PowerShell(Get-Content *)"
+      "PowerShell(Get-Content *)",
+      "Bash(powershell *)"
     ]
   },
   "hooks": {
