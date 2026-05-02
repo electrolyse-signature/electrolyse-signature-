@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { CalBooking } from '@/lib/cal-api'
 import type { ClientSummary } from '@/lib/types'
 import { getBookingPrice } from '@/lib/prices'
@@ -26,7 +26,32 @@ export default function BookingsTable({
   )
   const [cancellingId, setCancellingId] = useState<number | null>(null)
   const [selectedClient, setSelectedClient] = useState<ClientSummary | null>(null)
+  const [hiddenBookings, setHiddenBookings] = useState<Set<string>>(new Set())
+  const [showHidden, setShowHidden] = useState(false)
   const blocked = new Set(blockedEmails)
+
+  useEffect(() => {
+    const saved = localStorage.getItem('admin-hidden-bookings')
+    if (saved) setHiddenBookings(new Set(JSON.parse(saved)))
+  }, [])
+
+  function hideBooking(id: string) {
+    setHiddenBookings(prev => {
+      const next = new Set(prev)
+      next.add(id)
+      localStorage.setItem('admin-hidden-bookings', JSON.stringify([...next]))
+      return next
+    })
+  }
+
+  function unhideBooking(id: string) {
+    setHiddenBookings(prev => {
+      const next = new Set(prev)
+      next.delete(id)
+      localStorage.setItem('admin-hidden-bookings', JSON.stringify([...next]))
+      return next
+    })
+  }
 
   async function openClient(attendee: { name: string; email: string }) {
     const email = attendee.email.toLowerCase()
@@ -109,9 +134,12 @@ export default function BookingsTable({
     }
   }
 
-  // Group by day
+  const hiddenCount = bookings.filter(b => hiddenBookings.has(String(b.id))).length
+
+  // Group by day (filter hidden unless showHidden)
   const byDay = new Map<string, CalBooking[]>()
   for (const b of bookings) {
+    if (!showHidden && hiddenBookings.has(String(b.id))) continue
     const day = new Date(b.startTime).toLocaleDateString('fr-FR', {
       weekday: 'long', day: 'numeric', month: 'long',
     })
@@ -130,6 +158,16 @@ export default function BookingsTable({
 
   return (
     <>
+    {hiddenCount > 0 && (
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => setShowHidden(v => !v)}
+          className="text-xs text-gray-400 hover:text-gray-600 border border-gray-200 rounded-full px-3 py-1 bg-white"
+        >
+          {showHidden ? `Masquer les ${hiddenCount} entrée${hiddenCount > 1 ? 's' : ''} cachée${hiddenCount > 1 ? 's' : ''}` : `${hiddenCount} entrée${hiddenCount > 1 ? 's' : ''} cachée${hiddenCount > 1 ? 's' : ''} — Afficher`}
+        </button>
+      </div>
+    )}
     {selectedClient && (
       <ClientDetailModal
         client={selectedClient}
@@ -220,38 +258,45 @@ export default function BookingsTable({
                     </td>
                     <td className="px-4 py-3 w-40">
                       {isPast ? (
-                        attendanceStatus ? (
-                          <div className="flex items-center gap-2">
-                            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                              attendanceStatus === 'present'
-                                ? 'bg-green-100 text-green-700'
-                                : 'bg-red-100 text-red-700'
-                            }`}>
-                              {attendanceStatus === 'present' ? '✓ Venu' : '✗ Absent'}
-                            </span>
-                            <button
-                              onClick={() => markAttendance(booking, attendanceStatus === 'present' ? 'absent' : 'present')}
-                              className="text-xs text-gray-400 hover:text-gray-600"
-                            >
-                              Changer
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => markAttendance(booking, 'present')}
-                              className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 hover:bg-green-200"
-                            >
-                              ✓ Venu
-                            </button>
-                            <button
-                              onClick={() => markAttendance(booking, 'absent')}
-                              className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200"
-                            >
-                              ✗ Absent
-                            </button>
-                          </div>
-                        )
+                        <div className="flex flex-col gap-1">
+                          {attendanceStatus ? (
+                            <div className="flex items-center gap-2">
+                              <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                                attendanceStatus === 'present'
+                                  ? 'bg-green-100 text-green-700'
+                                  : 'bg-red-100 text-red-700'
+                              }`}>
+                                {attendanceStatus === 'present' ? '✓ Venu' : '✗ Absent'}
+                              </span>
+                              <button
+                                onClick={() => markAttendance(booking, attendanceStatus === 'present' ? 'absent' : 'present')}
+                                className="text-xs text-gray-400 hover:text-gray-600"
+                              >
+                                Changer
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => markAttendance(booking, 'present')}
+                                className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 hover:bg-green-200"
+                              >
+                                ✓ Venu
+                              </button>
+                              <button
+                                onClick={() => markAttendance(booking, 'absent')}
+                                className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 hover:bg-red-200"
+                              >
+                                ✗ Absent
+                              </button>
+                            </div>
+                          )}
+                          {hiddenBookings.has(bookingIdStr) ? (
+                            <button onClick={() => unhideBooking(bookingIdStr)} className="text-xs text-gray-400 hover:underline text-left">Réafficher</button>
+                          ) : (
+                            <button onClick={() => hideBooking(bookingIdStr)} className="text-xs text-gray-400 hover:underline text-left">Masquer</button>
+                          )}
+                        </div>
                       ) : isBlocked ? (
                         <div className="flex items-center gap-2">
                           <span className="inline-flex rounded-full border border-red-200 bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
