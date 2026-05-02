@@ -8,6 +8,7 @@ import AdminTable from '@/components/AdminTable'
 import StatsCards from '@/components/StatsCards'
 import BookingsTable from '@/components/BookingsTable'
 import PendingApprovalsTable, { type PendingApproval } from '@/components/PendingApprovalsTable'
+import PauseForm from '@/components/PauseForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -134,6 +135,8 @@ export default async function AnnulationsPage() {
           caWeek={caWeek}
           caMonth={caMonth}
         />
+
+        <PauseForm />
 
         <section>
           <h2 className="text-lg font-medium text-gray-700 mb-3">

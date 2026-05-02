@@ -72,7 +72,8 @@ export default function BookingsTable({
             <tbody className="divide-y divide-gray-100">
               {dayBookings.map(booking => {
                 const attendee = booking.attendees?.[0]
-                const isBlocked = attendee?.email ? blocked.has(attendee.email.toLowerCase()) : false
+                const isPause = attendee?.name === 'Pause'
+                const isBlocked = !isPause && attendee?.email ? blocked.has(attendee.email.toLowerCase()) : false
                 const isAlerted = isBlocked && !dismissed.has(booking.id)
                 const isPast = new Date(booking.startTime) < now
                 const bookingIdStr = String(booking.id)
@@ -81,6 +82,15 @@ export default function BookingsTable({
                 const end = new Date(booking.endTime).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
 
                 const price = getBookingPrice(booking.startTime, booking.endTime, booking.title)
+
+                if (isPause) {
+                  return (
+                    <tr key={booking.id} className="bg-gray-100">
+                      <td className="px-4 py-3 font-medium text-gray-500 whitespace-nowrap w-28">{start} – {end}</td>
+                      <td colSpan={5} className="px-4 py-3 text-gray-400 italic text-sm">— Pause —</td>
+                    </tr>
+                  )
+                }
 
                 return (
                   <tr key={booking.id} className={isAlerted ? 'bg-red-50' : isPast && !attendanceStatus ? 'bg-yellow-50' : ''}>
