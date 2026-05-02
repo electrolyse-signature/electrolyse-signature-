@@ -38,7 +38,16 @@ export default function AdminMobileView({
   pendingApprovals, caToday, caWeek, caMonth, todayCount, weekCount, unmarkedCount,
   onToggleView, signOut,
 }: Props) {
-  const [tab, setTab] = useState<MobileTab>('planning')
+  const [tab, setTab] = useState<MobileTab>(() => {
+    if (typeof window === 'undefined') return 'planning'
+    const saved = localStorage.getItem('adminTab') as MobileTab | null
+    return saved && ['planning','clients','compta','pauses','prix'].includes(saved) ? saved : 'planning'
+  })
+
+  function switchTab(t: MobileTab) {
+    setTab(t)
+    localStorage.setItem('adminTab', t)
+  }
   const [bookings, setBookings] = useState(initial)
   const [attendance, setAttendance] = useState<Map<string, 'present' | 'absent'>>(
     new Map(initialAttendance.map(a => [a.booking_id, a.status]))
@@ -403,7 +412,7 @@ export default function AdminMobileView({
           {tabs.map(t => (
             <button
               key={t.key}
-              onClick={() => setTab(t.key)}
+              onClick={() => switchTab(t.key)}
               className={`flex flex-col items-center justify-center gap-0.5 transition-colors ${
                 tab === t.key ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'
               }`}

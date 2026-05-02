@@ -48,13 +48,22 @@ export default function AdminLayout({
   const [tab, setTab] = useState<Tab>('planning')
 
   useEffect(() => {
-    const saved = localStorage.getItem('adminView')
-    if (saved === 'desktop' || saved === 'mobile') {
-      setView(saved)
+    const savedView = localStorage.getItem('adminView')
+    if (savedView === 'desktop' || savedView === 'mobile') {
+      setView(savedView)
     } else {
       setView(window.innerWidth < 768 ? 'mobile' : 'desktop')
     }
+    const savedTab = localStorage.getItem('adminTab') as Tab | null
+    if (savedTab && ['planning','clients','compta','pauses','prix'].includes(savedTab)) {
+      setTab(savedTab)
+    }
   }, [])
+
+  function switchTab(t: Tab) {
+    setTab(t)
+    localStorage.setItem('adminTab', t)
+  }
 
   function toggle() {
     const next = view === 'desktop' ? 'mobile' : 'desktop'
@@ -119,7 +128,7 @@ export default function AdminLayout({
             ] as { key: Tab; label: string }[]).map(t => (
               <button
                 key={t.key}
-                onClick={() => setTab(t.key)}
+                onClick={() => switchTab(t.key)}
                 className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                   tab === t.key
                     ? 'border-gray-900 text-gray-900'
