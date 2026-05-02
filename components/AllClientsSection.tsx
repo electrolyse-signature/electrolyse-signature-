@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { ClientSummary } from '@/lib/types'
 import ClientDetailModal from '@/components/ClientDetailModal'
+import { ADMIN_FROM_DATE } from '@/lib/admin-config'
 
 export default function AllClientsSection() {
   const [clients, setClients] = useState<ClientSummary[]>([])
@@ -12,20 +13,11 @@ export default function AllClientsSection() {
   const [selected, setSelected] = useState<ClientSummary | null>(null)
   const [hiddenEmails, setHiddenEmails] = useState<Set<string>>(new Set())
   const [showHidden, setShowHidden] = useState(false)
-  const [fromDate, setFromDate] = useState('')
 
   useEffect(() => {
     const saved = localStorage.getItem('admin-hidden-clients')
     if (saved) setHiddenEmails(new Set(JSON.parse(saved)))
-    const savedFrom = localStorage.getItem('admin-clients-from-date')
-    if (savedFrom) setFromDate(savedFrom)
   }, [])
-
-  function updateFromDate(val: string) {
-    setFromDate(val)
-    if (val) localStorage.setItem('admin-clients-from-date', val)
-    else localStorage.removeItem('admin-clients-from-date')
-  }
 
   useEffect(() => {
     fetch('/api/admin/clients-list')
@@ -75,10 +67,14 @@ export default function AllClientsSection() {
     })
   }, [])
 
+  // Clients passant le filtre de date (complètement invisibles sinon)
+  const afterDate = clients.filter(c =>
+    c.last_booking_date ? c.last_booking_date >= ADMIN_FROM_DATE : false
+  )
+
   const q = search.toLowerCase()
-  const visible = clients.filter(c => {
+  const visible = afterDate.filter(c => {
     if (!showHidden && hiddenEmails.has(c.email)) return false
-    if (fromDate && c.last_booking_date && c.last_booking_date < fromDate) return false
     if (filter === 'blocked' && !c.is_blocked) return false
     if (filter === 'signaled' && (c.is_blocked || c.cancellation_count < 2)) return false
     if (q && !c.name.toLowerCase().includes(q) && !c.email.toLowerCase().includes(q)) return false
@@ -89,9 +85,10 @@ export default function AllClientsSection() {
     ? (clients.find(c => c.email === selected.email) ?? selected)
     : null
 
-  const blocked = clients.filter(c => c.is_blocked).length
-  const signaled = clients.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
-  const hiddenCount = clients.filter(c => hiddenEmails.has(c.email)).length
+  const blocked = afterDate.filter(c => c.is_blocked).length
+  const signaled = afterDate.filter(c => !c.is_blocked && c.cancellation_count >= 2).length
+  // Ne compte que les clients après ADMIN_FROM_DATE qui sont manuellement masqués
+  const hiddenCount = afterDate.filter(c => hiddenEmails.has(c.email)).length
 
   function fmtDate(d: string | null | undefined) {
     if (!d) return '—'
@@ -112,7 +109,7 @@ export default function AllClientsSection() {
 
       {/* Résumé */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <span className="text-sm text-gray-500">{clients.length} client{clients.length > 1 ? 's' : ''} au total</span>
+        <span className="text-sm text-gray-500">{afterDate.length} client{afterDate.length > 1 ? 's' : ''} au total</span>
         {blocked > 0 && (
           <span className="inline-flex rounded-full border border-red-200 bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700">
             {blocked} bloquée{blocked > 1 ? 's' : ''}
@@ -142,26 +139,6 @@ export default function AllClientsSection() {
           onChange={e => setSearch(e.target.value)}
           className="flex-1 min-w-[200px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blush shadow-sm"
         />
-        <div className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white shadow-sm px-3 py-1.5">
-          <span className="text-xs text-gray-500 whitespace-nowrap">Depuis le</span>
-          <input
-            type="date"
-            value={fromDate}
-            onChange={e => updateFromDate(e.target.value)}
-            className="text-xs text-gray-700 focus:outline-none bg-transparent"
-          />
-          {fromDate && (
-            <button onClick={() => updateFromDate('')} className="text-gray-400 hover:text-gray-600 text-xs leading-none" title="Supprimer le filtre">✕</button>
-          )}
-        </div>
-        {!fromDate && (
-          <button
-            onClick={() => updateFromDate('2026-06-01')}
-            className="rounded-lg border border-gray-200 bg-white shadow-sm px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap"
-          >
-            Depuis juin 2026
-          </button>
-        )}
         <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden text-xs font-medium">
           {(['all', 'signaled', 'blocked'] as const).map(f => (
             <button
@@ -202,10 +179,7 @@ export default function AllClientsSection() {
                 return (
                   <tr key={c.email} className={`${rowClass} hover:bg-gray-50 transition-colors`}>
                     <td className="px-4 py-3 font-medium text-gray-900">
-                      <button
-                        onClick={() => setSelected(c)}
-                        className="hover:underline hover:text-blush text-left"
-                      >
+                      <button onClick={() => setSelected(c)} className="hover:underline hover:text-blush text-left">
                         {c.name}
                       </button>
                     </td>
@@ -230,42 +204,26 @@ export default function AllClientsSection() {
                         className="text-left text-xs text-gray-400 hover:text-gray-600 truncate block max-w-full"
                         title={c.note ?? undefined}
                       >
-                        {c.note ? (
-                          <span className="text-gray-600">{c.note}</span>
-                        ) : (
-                          <span className="italic">Ajouter…</span>
-                        )}
+                        {c.note ? <span className="text-gray-600">{c.note}</span> : <span className="italic">Ajouter…</span>}
                       </button>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex flex-col gap-1">
                         {c.is_blocked ? (
-                          <button
-                            onClick={() => handleUnblock(c.email)}
-                            className="text-xs text-blue-600 hover:underline whitespace-nowrap text-left"
-                          >
+                          <button onClick={() => handleUnblock(c.email)} className="text-xs text-blue-600 hover:underline whitespace-nowrap text-left">
                             Débloquer
                           </button>
                         ) : (
-                          <button
-                            onClick={() => handleBlock(c.email, c.name)}
-                            className="text-xs text-red-600 hover:underline whitespace-nowrap text-left"
-                          >
+                          <button onClick={() => handleBlock(c.email, c.name)} className="text-xs text-red-600 hover:underline whitespace-nowrap text-left">
                             Bloquer
                           </button>
                         )}
                         {hiddenEmails.has(c.email) ? (
-                          <button
-                            onClick={() => handleUnhide(c.email)}
-                            className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left"
-                          >
+                          <button onClick={() => handleUnhide(c.email)} className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left">
                             Réafficher
                           </button>
                         ) : (
-                          <button
-                            onClick={() => handleHide(c.email)}
-                            className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left"
-                          >
+                          <button onClick={() => handleHide(c.email)} className="text-xs text-gray-400 hover:underline whitespace-nowrap text-left">
                             Masquer
                           </button>
                         )}

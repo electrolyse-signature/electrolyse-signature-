@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import type { CalBooking } from '@/lib/cal-api'
+import { ADMIN_FROM_DATE } from '@/lib/admin-config'
 import type { ClientSummary } from '@/lib/types'
 import { getBookingPrice } from '@/lib/prices'
 import ClientDetailModal from '@/components/ClientDetailModal'
@@ -134,11 +135,13 @@ export default function BookingsTable({
     }
   }
 
-  const hiddenCount = bookings.filter(b => hiddenBookings.has(String(b.id))).length
+  // Seules les réservations à partir de ADMIN_FROM_DATE sont visibles
+  const afterDate = bookings.filter(b => b.startTime >= ADMIN_FROM_DATE)
+  const hiddenCount = afterDate.filter(b => hiddenBookings.has(String(b.id))).length
 
   // Group by day (filter hidden unless showHidden)
   const byDay = new Map<string, CalBooking[]>()
-  for (const b of bookings) {
+  for (const b of afterDate) {
     if (!showHidden && hiddenBookings.has(String(b.id))) continue
     const day = new Date(b.startTime).toLocaleDateString('fr-FR', {
       weekday: 'long', day: 'numeric', month: 'long',
@@ -148,7 +151,7 @@ export default function BookingsTable({
     byDay.set(day, list)
   }
 
-  if (bookings.length === 0) {
+  if (afterDate.length === 0) {
     return (
       <p className="px-4 py-8 text-center text-gray-400 text-sm rounded-lg border border-gray-200 bg-white">
         Aucun rendez-vous
