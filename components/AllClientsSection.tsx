@@ -12,11 +12,20 @@ export default function AllClientsSection() {
   const [selected, setSelected] = useState<ClientSummary | null>(null)
   const [hiddenEmails, setHiddenEmails] = useState<Set<string>>(new Set())
   const [showHidden, setShowHidden] = useState(false)
+  const [fromDate, setFromDate] = useState('')
 
   useEffect(() => {
     const saved = localStorage.getItem('admin-hidden-clients')
     if (saved) setHiddenEmails(new Set(JSON.parse(saved)))
+    const savedFrom = localStorage.getItem('admin-clients-from-date')
+    if (savedFrom) setFromDate(savedFrom)
   }, [])
+
+  function updateFromDate(val: string) {
+    setFromDate(val)
+    if (val) localStorage.setItem('admin-clients-from-date', val)
+    else localStorage.removeItem('admin-clients-from-date')
+  }
 
   useEffect(() => {
     fetch('/api/admin/clients-list')
@@ -69,6 +78,7 @@ export default function AllClientsSection() {
   const q = search.toLowerCase()
   const visible = clients.filter(c => {
     if (!showHidden && hiddenEmails.has(c.email)) return false
+    if (fromDate && c.last_booking_date && c.last_booking_date < fromDate) return false
     if (filter === 'blocked' && !c.is_blocked) return false
     if (filter === 'signaled' && (c.is_blocked || c.cancellation_count < 2)) return false
     if (q && !c.name.toLowerCase().includes(q) && !c.email.toLowerCase().includes(q)) return false
@@ -132,6 +142,26 @@ export default function AllClientsSection() {
           onChange={e => setSearch(e.target.value)}
           className="flex-1 min-w-[200px] rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blush shadow-sm"
         />
+        <div className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white shadow-sm px-3 py-1.5">
+          <span className="text-xs text-gray-500 whitespace-nowrap">Depuis le</span>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={e => updateFromDate(e.target.value)}
+            className="text-xs text-gray-700 focus:outline-none bg-transparent"
+          />
+          {fromDate && (
+            <button onClick={() => updateFromDate('')} className="text-gray-400 hover:text-gray-600 text-xs leading-none" title="Supprimer le filtre">✕</button>
+          )}
+        </div>
+        {!fromDate && (
+          <button
+            onClick={() => updateFromDate('2026-06-01')}
+            className="rounded-lg border border-gray-200 bg-white shadow-sm px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-50 transition-colors whitespace-nowrap"
+          >
+            Depuis juin 2026
+          </button>
+        )}
         <div className="flex rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden text-xs font-medium">
           {(['all', 'signaled', 'blocked'] as const).map(f => (
             <button
