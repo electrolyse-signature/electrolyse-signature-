@@ -69,7 +69,8 @@
       "WebFetch(domain:partnercare.treatwell.com)",
       "WebFetch(domain:support.google.com)",
       "WebFetch(domain:cal.com)",
-      "WebFetch(domain:app.cal.com)"
+      "WebFetch(domain:app.cal.com)",
+      "WebFetch(domain:www.treatwell.co.uk)"
     ]
   },
   "hooks": {
