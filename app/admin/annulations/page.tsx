@@ -9,6 +9,7 @@ import StatsCards from '@/components/StatsCards'
 import BookingsTable from '@/components/BookingsTable'
 import PendingApprovalsTable, { type PendingApproval } from '@/components/PendingApprovalsTable'
 import PauseForm from '@/components/PauseForm'
+import AdminRefresher from '@/components/AdminRefresher'
 
 export const dynamic = 'force-dynamic'
 
@@ -114,11 +115,14 @@ export default async function AnnulationsPage() {
 
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold text-gray-900 capitalize">{today}</h1>
-          <form action={async () => { 'use server'; await signOut({ redirectTo: '/' }) }}>
-            <button type="submit" className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
-              Déconnexion
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <AdminRefresher />
+            <form action={async () => { 'use server'; await signOut({ redirectTo: '/' }) }}>
+              <button type="submit" className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
+                Déconnexion
+              </button>
+            </form>
+          </div>
         </div>
 
         {pendingApprovals.length > 0 && (
