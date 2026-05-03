@@ -79,7 +79,9 @@
       "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\lib\\\\parse-treatwell.ts\")",
       "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\lib\\\\calcom.ts\")",
       "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\supabase\\\\treatwell_sync_log.sql\")",
-      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\note treatwell.md\")"
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\note treatwell.md\")",
+      "Bash(gh repo *)",
+      "WebFetch(domain:github.com)"
     ]
   },
   "hooks": {
