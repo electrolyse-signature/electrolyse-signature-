@@ -81,7 +81,10 @@
       "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\supabase\\\\treatwell_sync_log.sql\")",
       "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\note treatwell.md\")",
       "Bash(gh repo *)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(export PATH=\"A:/npm-global/bin:$PATH\")",
+      "Bash(ruflo --version)",
+      "Bash(export PATH=\"/a/npm-global:$PATH\")"
     ]
   },
   "hooks": {
