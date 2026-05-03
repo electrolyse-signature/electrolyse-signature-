@@ -6,6 +6,7 @@ import Services from '@/components/Services'
 import Booking from '@/components/Booking'
 import Reviews from '@/components/Reviews'
 import FAQ from '@/components/FAQ'
+import Process from '@/components/Process'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
@@ -32,6 +33,7 @@ export default async function Home() {
         <Hero totalReviews={totalReviews} />
         <About totalReviews={totalReviews} />
         <Gallery />
+        <Process />
         <Services prices={prices} />
         <Booking />
         <Reviews totalReviews={totalReviews} />
