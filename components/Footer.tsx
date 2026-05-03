@@ -38,6 +38,7 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <a href="/mentions-legales" className="hover:text-white/70 transition-colors">Mentions légales</a>
             <a href="/politique-de-confidentialite" className="hover:text-white/70 transition-colors">Confidentialité</a>
+            <a href="/cgv" className="hover:text-white/70 transition-colors">CGV</a>
           </div>
           <a href="/admin/annulations" className="hover:text-white/70 transition-colors">
             Admin

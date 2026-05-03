@@ -16,7 +16,7 @@ export default function MentionsLegales() {
           47 Grande Allée du 12 Février 1934, 77186 Noisiel<br />
           Téléphone : +33 7 69 83 29 44<br />
           Email : electrolyse.signature@gmail.com<br />
-          SIRET : <span className="text-blush">[À compléter]</span>
+          SIRET : XXX XXX XXX XXXXX
         </p>
       </section>
 
