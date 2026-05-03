@@ -73,7 +73,13 @@
       "WebFetch(domain:www.treatwell.co.uk)",
       "Bash(node -e \"const r = require\\('./lib/treatwell-reviews.ts'\\); console.log\\('impossible'\\)\")",
       "Bash(findstr /c:\"author:\" lib\\\\treatwell-reviews.ts)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(npm uninstall *)",
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\lib\\\\gmail.ts\")",
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\lib\\\\parse-treatwell.ts\")",
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\lib\\\\calcom.ts\")",
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\supabase\\\\treatwell_sync_log.sql\")",
+      "Bash(Remove-Item -Force \"A:\\\\Users\\\\Cruzaider\\\\Desktop\\\\Site amal\\\\note treatwell.md\")"
     ]
   },
   "hooks": {
