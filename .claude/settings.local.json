@@ -85,7 +85,9 @@
       "Bash(export PATH=\"A:/npm-global/bin:$PATH\")",
       "Bash(ruflo --version)",
       "Bash(export PATH=\"/a/npm-global:$PATH\")",
-      "Bash(ruflo --help)"
+      "Bash(ruflo --help)",
+      "Bash(ruflo init *)",
+      "Bash(ruflo memory *)"
     ]
   },
   "hooks": {
