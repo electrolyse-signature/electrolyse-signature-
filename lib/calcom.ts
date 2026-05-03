@@ -1,19 +1,41 @@
 const CALCOM_API = 'https://api.cal.com/v1'
 
-// CALCOM_EVENT_TYPES = JSON map durée → ID, ex: {"5":111,"15":222,"30":333,"45":444,"60":555,"90":666}
-// CALCOM_EVENT_TYPE_ID = ID de secours si le map n'est pas défini
-function resolveEventTypeId(durationMinutes: number): number {
-  const raw = process.env.CALCOM_EVENT_TYPES
-  if (raw) {
-    try {
-      const map: Record<string, number> = JSON.parse(raw)
-      // Cherche la durée exacte, sinon prend la durée la plus proche par excès
-      const durations = Object.keys(map).map(Number).sort((a, b) => a - b)
-      const match = durations.find(d => d >= durationMinutes) ?? durations[durations.length - 1]
-      return map[String(match)]
-    } catch {}
-  }
-  return Number(process.env.CALCOM_EVENT_TYPE_ID)
+interface CalEventType {
+  id: number
+  slug: string
+  length: number // durée en minutes
+  title: string
+}
+
+let cachedEventTypes: CalEventType[] | null = null
+
+async function getEventTypes(apiKey: string): Promise<CalEventType[]> {
+  if (cachedEventTypes) return cachedEventTypes
+
+  const res = await fetch(`${CALCOM_API}/event-types?apiKey=${apiKey}`)
+  if (!res.ok) throw new Error(`Cal.com event-types ${res.status}`)
+
+  const json = await res.json()
+  // Cal.com v1 retourne { event_types: [...] } ou { eventTypes: [...] }
+  const list: CalEventType[] = json.event_types ?? json.eventTypes ?? []
+  cachedEventTypes = list
+  return list
+}
+
+// Trouve l'event type dont la durée est la plus proche par excès de durationMinutes.
+// Exclut les consultations initiales (slug "secret") pour les vraies séances.
+async function resolveEventTypeId(apiKey: string, durationMinutes: number): Promise<number> {
+  const types = await getEventTypes(apiKey)
+  if (types.length === 0) throw new Error('Aucun event type trouvé dans Cal.com')
+
+  // Exclure la consultation initiale pour les blocages Treatwell (séances uniquement)
+  const seances = types.filter(t => t.slug !== 'secret')
+  const pool = seances.length > 0 ? seances : types
+
+  // Trier par durée croissante et prendre la plus proche par excès
+  const sorted = [...pool].sort((a, b) => a.length - b.length)
+  const match = sorted.find(t => t.length >= durationMinutes) ?? sorted[sorted.length - 1]
+  return match.id
 }
 
 export async function createBlockerBooking(
@@ -23,9 +45,9 @@ export async function createBlockerBooking(
   durationMinutes: number,
 ) {
   const apiKey = process.env.CALCOM_API_KEY
-  const eventTypeId = resolveEventTypeId(durationMinutes)
+  if (!apiKey) throw new Error('CALCOM_API_KEY manquant')
 
-  if (!apiKey || !eventTypeId) throw new Error('CALCOM_API_KEY ou CALCOM_EVENT_TYPES manquant')
+  const eventTypeId = await resolveEventTypeId(apiKey, durationMinutes)
 
   const res = await fetch(`${CALCOM_API}/bookings?apiKey=${apiKey}`, {
     method: 'POST',
