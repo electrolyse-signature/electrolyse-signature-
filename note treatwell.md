@@ -1,176 +1,130 @@
-# Note — Synchronisation Treatwell ↔ Cal.com via email
+# Note — Synchronisation Treatwell → Cal.com (solution gratuite)
 
-## Contexte
+## Comment ça marche
 
-Treatwell n'a pas d'API publique. Il est impossible de lire les réservations Treatwell directement.
-En revanche, **Treatwell envoie un email de confirmation** à chaque nouvelle réservation sur ton adresse `electrolyse.signature@gmail.com`.
+```
+Treatwell reçoit une réservation
+  → envoie un email de confirmation à electrolyse.signature@gmail.com
+    → cron-job.org appelle /api/cron/treatwell-sync toutes les 5 min
+      → Gmail API lit l'email
+        → parse la date + heure
+          → Cal.com API crée un "blocker" sur ce créneau
+            → le slot est bloqué sur ton site aussi
+```
 
-L'idée : intercepter cet email, en extraire la date et l'heure, et bloquer automatiquement ce créneau sur Cal.com.
+**Résultat** : une cliente qui réserve sur Treatwell ne peut plus réserver le même créneau sur Cal.com.
 
 ---
 
-## Ce que ça résout
+## Fichiers créés
 
-- Une cliente réserve sur **Treatwell** → le créneau se bloque automatiquement sur **Cal.com**
-- Une cliente réserve sur **Cal.com** → Treatwell n'est pas mis à jour (impossible sans API), mais Cal.com étant prioritaire sur ton site, c'est acceptable
-- Résultat : pas de double réservation dans le sens Treatwell → Cal.com
-
----
-
-## Solution 1 — Sans code (Zapier ou Make.com)
-
-### Outils
-- **Zapier** (zapier.com) ou **Make.com** (make.com)
-- Les deux ont des intégrations natives Gmail + Cal.com
-
-### Étapes Zapier
-
-1. Créer un compte Zapier
-2. Nouveau "Zap" :
-   - **Trigger** : Gmail → "New email matching search"
-     - Filtre : `from:noreply@treatwell.fr` ou `subject:réservation`
-   - **Action** : Cal.com → "Create Booking"
-     - Mapper : date extraite de l'email → champ `start`
-     - Durée selon le service détecté
-3. Tester avec un email de confirmation Treatwell réel
-4. Activer le Zap
-
-### Coût
-- Zapier Free : 100 tâches/mois (suffisant si peu de réservations)
-- Zapier Starter : ~20 €/mois pour 750 tâches
-
-### Limite
-- Zapier ne peut pas parser automatiquement du texte complexe. Si le format de l'email Treatwell change, il faut reconfigurer.
-- Un délai de 1 à 15 min est possible entre la réservation Treatwell et le blocage Cal.com.
+| Fichier | Rôle |
+|---------|------|
+| `lib/gmail.ts` | Lit les emails Treatwell via Gmail API |
+| `lib/parse-treatwell.ts` | Extrait date + heure + durée de l'email |
+| `lib/calcom.ts` | Crée un blocker via Cal.com API |
+| `app/api/cron/treatwell-sync/route.ts` | Route appelée toutes les 5 min |
+| `supabase/treatwell_sync_log.sql` | Table pour éviter les doublons |
 
 ---
 
-## Solution 2 — Avec code (Vercel Cron + Gmail API + Cal.com API)
+## Variables d'environnement à ajouter (Vercel → Settings → Environment Variables)
 
-### Architecture
-
-```
-Vercel Cron (toutes les 5 min)
-  → Gmail API : récupère les nouveaux emails Treatwell
-  → Parse l'email : extrait date, heure, durée
-  → Cal.com API : crée un "blocker" sur le créneau
-  → Log dans Supabase (table treatwell_sync_log)
-```
-
-### Fichiers à créer
-
-```
-lib/gmail.ts          → client Gmail API (OAuth2)
-lib/calcom.ts         → appel API Cal.com (create booking)
-lib/parse-treatwell.ts → regex pour extraire date/heure de l'email
-app/api/cron/treatwell-sync/route.ts → route appellée par Vercel Cron
-```
-
-### Configuration nécessaire
-
-**Variables d'environnement**
 ```
 GMAIL_CLIENT_ID=
 GMAIL_CLIENT_SECRET=
-GMAIL_REFRESH_TOKEN=     ← obtenu via OAuth2 Playground
-CALCOM_API_KEY=          ← dans Cal.com Settings > API Keys
-CALCOM_EVENT_TYPE_ID=    ← ID du type de rdv "Consultation" sur Cal.com
+GMAIL_REFRESH_TOKEN=
+CALCOM_API_KEY=
+CALCOM_EVENT_TYPE_ID=
+CRON_SECRET=          ← mot de passe au choix, ex: un UUID aléatoire
 ```
-
-**Vercel Cron** (dans `vercel.json`)
-```json
-{
-  "crons": [
-    {
-      "path": "/api/cron/treatwell-sync",
-      "schedule": "*/5 * * * *"
-    }
-  ]
-}
-```
-
-### Exemple de logique de parsing
-
-Format email Treatwell typique :
-> "Nouvelle réservation — Épilation électrolyse 30 min  
-> Le mardi 13 mai 2026 à 10h30  
-> Cliente : Marie Dupont"
-
-Regex à adapter selon le vrai format :
-```ts
-const dateMatch = body.match(/Le\s+\w+\s+(\d+)\s+(\w+)\s+(\d{4})\s+à\s+(\d+)h(\d+)/)
-// → jour, mois, année, heure, minutes
-```
-
-**Important** : analyser 3-4 vrais emails Treatwell avant de coder le parser.
-
-### Cal.com API — Créer un blocker
-
-```ts
-await fetch('https://api.cal.com/v1/bookings', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${process.env.CALCOM_API_KEY}`,
-  },
-  body: JSON.stringify({
-    eventTypeId: Number(process.env.CALCOM_EVENT_TYPE_ID),
-    start: '2026-05-13T10:30:00+02:00',  // ISO 8601
-    end:   '2026-05-13T11:00:00+02:00',
-    responses: {
-      name:  'Treatwell (bloqué)',
-      email: 'noreply@treatwell.fr',
-    },
-    metadata: { source: 'treatwell-sync' },
-    language: 'fr',
-    timeZone: 'Europe/Paris',
-  }),
-})
-```
-
-### Table Supabase suggérée — `treatwell_sync_log`
-
-| Colonne | Type | Description |
-|---------|------|-------------|
-| id | uuid | clé primaire |
-| gmail_message_id | text | pour éviter les doublons |
-| treatwell_date | timestamptz | créneau détecté |
-| calcom_booking_id | text | id retourné par Cal.com |
-| status | text | 'synced' ou 'error' |
-| created_at | timestamptz | date du traitement |
 
 ---
 
-## Comparatif
+## Étape 1 — Créer la table Supabase
 
-| Critère | Zapier (sans code) | Code custom |
-|---------|-------------------|-------------|
-| Délai de sync | 1–15 min | ~5 min |
-| Coût | 0–20€/mois | 0€ (Vercel gratuit) |
-| Fiabilité | Bonne | Très bonne |
-| Maintenance | Faible | Moyenne |
-| Flexibilité | Limitée | Totale |
+Dans le dashboard Supabase → SQL Editor, coller et exécuter le contenu de :
+`supabase/treatwell_sync_log.sql`
 
 ---
 
-## Recommandation
+## Étape 2 — Obtenir le Gmail Refresh Token (une seule fois)
 
-**Commencer par Zapier** pour tester le concept gratuitement.  
-Si ça fonctionne bien et que le volume de réservations augmente, migrer vers la solution code pour supprimer le coût mensuel.
+1. Aller sur [Google Cloud Console](https://console.cloud.google.com)
+2. Créer un projet (ou utiliser un existant)
+3. Activer l'API **Gmail API** (APIs & Services → Library → Gmail API)
+4. Créer des identifiants OAuth 2.0 :
+   - Type : **Application Web**
+   - URI de redirection autorisée : `https://developers.google.com/oauthplayground`
+5. Copier le **Client ID** et le **Client Secret**
+6. Aller sur [OAuth2 Playground](https://developers.google.com/oauthplayground)
+   - Cliquer ⚙️ → cocher "Use your own OAuth credentials"
+   - Entrer ton Client ID et Client Secret
+7. Dans "Step 1" — chercher **Gmail API v1**, sélectionner :
+   - `https://www.googleapis.com/auth/gmail.readonly`
+8. Cliquer "Authorize APIs" → connecter avec electrolyse.signature@gmail.com
+9. Dans "Step 2" → cliquer "Exchange authorization code for tokens"
+10. Copier le **Refresh Token**
+
+→ Ajouter `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` dans Vercel.
 
 ---
 
-## Prérequis avant de commencer
+## Étape 3 — Obtenir la clé API Cal.com et l'Event Type ID
 
-1. Récupérer 2-3 vrais emails de confirmation Treatwell pour analyser leur format exact
-2. Activer l'API Cal.com (Settings > Developer > API Keys)
-3. Noter l'`eventTypeId` du type de rdv utilisé
-4. Choisir : Zapier ou code
+1. Se connecter sur [Cal.com](https://cal.com)
+2. **API Key** : Settings → Developer → API Keys → + New API Key → copier
+3. **Event Type ID** :
+   - Aller sur Event Types
+   - Cliquer sur le type de rdv utilisé (ex: "Électrolyse 30 min")
+   - L'URL contient l'ID : `cal.com/event-types/XXXXX` → noter ce numéro
+4. Ajouter `CALCOM_API_KEY` et `CALCOM_EVENT_TYPE_ID` dans Vercel
+
+**Important** : si tu as plusieurs durées (30 min, 45 min, 60 min), noter l'ID du type le plus courant.
+La durée exacte sera extraite de l'email Treatwell et envoyée à Cal.com.
 
 ---
 
-## Limitations connues
+## Étape 4 — Configurer le cron gratuit (cron-job.org)
 
-- Si une cliente annule sur Treatwell, le blocage Cal.com n'est PAS supprimé automatiquement (Treatwell n'envoie pas forcément d'email d'annulation dans un format parsable)
-- Le créneau apparaîtra comme "Treatwell (bloqué)" dans Cal.com — pas le vrai nom de la cliente
-- Délai entre réservation et blocage (1 à 15 min selon la solution) : risque minime de double réservation
+Vercel gratuit ne supporte pas les crons fréquents.
+→ Utiliser [cron-job.org](https://cron-job.org) (gratuit, sans limite).
+
+1. Créer un compte sur cron-job.org
+2. Créer un nouveau cron job :
+   - **URL** : `https://electrolyse-signature.vercel.app/api/cron/treatwell-sync?secret=TON_CRON_SECRET`
+   - **Schedule** : toutes les 5 minutes
+   - **Method** : GET
+3. Activer le job
+
+Remplacer `TON_CRON_SECRET` par la valeur de la variable `CRON_SECRET` dans Vercel.
+
+---
+
+## Étape 5 — Tester
+
+1. Faire une réservation de test sur Treatwell
+2. Attendre l'email de confirmation dans Gmail
+3. Attendre max 5 min
+4. Vérifier dans Cal.com que le créneau est bloqué
+5. Vérifier dans Supabase → table `treatwell_sync_log` → une ligne avec `status: synced`
+
+En cas de problème, regarder la colonne `error_message` dans la table.
+
+---
+
+## En cas de parse_error
+
+Si le statut est `parse_error`, c'est que le parser n'a pas reconnu le format de l'email Treatwell.
+→ Copier le contenu de `raw_subject` et du corps de l'email dans une note
+→ Me l'envoyer pour adapter le parser à ton format exact Treatwell
+
+---
+
+## Limitations
+
+- Délai max de 5 min entre réservation Treatwell et blocage Cal.com
+- Si une cliente annule sur Treatwell, le blocage Cal.com **n'est pas supprimé** automatiquement
+  → Option : supprimer manuellement dans Cal.com les réservations avec `source: treatwell-sync`
+- Un seul type de rdv est bloqué. Si tu as 30 min, 45 min, 60 min comme event types séparés,
+  il faut adapter pour choisir le bon `eventTypeId` selon la durée parsée
