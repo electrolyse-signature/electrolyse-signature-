@@ -12,11 +12,12 @@ export default function MentionsLegales() {
         <h2 className="font-sans font-semibold text-lg mb-3">Éditeur du site</h2>
         <p className="text-text-secondary leading-relaxed">
           <strong>Electrolyse Signature</strong><br />
-          Praticienne indépendante<br />
+          Praticienne indépendante — Auto-entrepreneur<br />
           47 Grande Allée du 12 Février 1934, 77186 Noisiel<br />
           Téléphone : +33 7 69 83 29 44<br />
           Email : electrolyse.signature@gmail.com<br />
-          SIRET : XXX XXX XXX XXXXX
+          SIRET : <span className="text-red-400">[À COMPLÉTER]</span><br />
+          Directeur de publication : Amal
         </p>
       </section>
 

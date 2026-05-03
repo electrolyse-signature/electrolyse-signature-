@@ -16,6 +16,7 @@ export default function About() {
               src="/soin-1.jpeg"
               alt="Salle de soin du cabinet d'électrolyse permanente Electrolyse Signature à Noisiel"
               fill
+              priority
               className="object-cover"
             />
           </div>

@@ -85,10 +85,47 @@ function buildLocalBusinessSchema(reviewCount: number) {
       reviewCount: String(reviewCount),
     },
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '10:00', closes: '19:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '09:00', closes: '13:00' },
+    ],
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Consultation initiale',
+        description: 'Consultation gratuite et obligatoire pour toute nouvelle cliente',
+        priceCurrency: 'EUR',
+        price: '0',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Séance électrolyse 30 min',
+        priceCurrency: 'EUR',
+        price: '75',
+        availability: 'https://schema.org/InStock',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Séance électrolyse 1h',
+        priceCurrency: 'EUR',
+        price: '130',
+        availability: 'https://schema.org/InStock',
+      },
     ],
     sameAs: ['https://www.instagram.com/electrolyse.signature/'],
   }
+}
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
+    { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_URL}#services` },
+    { '@type': 'ListItem', position: 3, name: 'Réservation', item: `${SITE_URL}#reservation` },
+    { '@type': 'ListItem', position: 4, name: 'FAQ', item: `${SITE_URL}#faq` },
+    { '@type': 'ListItem', position: 5, name: 'Contact', item: `${SITE_URL}#contact` },
+  ],
 }
 
 const faqSchema = {
@@ -112,6 +149,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       </head>
       <body>
         {children}

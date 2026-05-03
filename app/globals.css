@@ -14,6 +14,20 @@
   html { scroll-behavior: smooth; }
   body { @apply bg-bg text-text-primary font-sans; }
   h1, h2, h3 { @apply font-serif; }
+
+  *:focus-visible {
+    outline: 2px solid #C9A99A;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+  }
 }
 
 @layer utilities {

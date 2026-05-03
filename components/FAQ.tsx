@@ -33,6 +33,14 @@ const faqs = [
     q: "Le cabinet est-il réservé aux femmes ?",
     a: "Oui, le cabinet Electrolyse Signature est exclusivement réservé aux femmes, dans un cadre confidentiel et bienveillant à Noisiel, en Seine-et-Marne."
   },
+  {
+    q: "Faites-vous l'électrolyse dans toute la Seine-et-Marne ?",
+    a: "Notre cabinet d'électrolyse 77 est situé à Noisiel (77186), à 5 minutes à pied du RER A. Nous accueillons des clientes de toute la Seine-et-Marne : Torcy, Champs-sur-Marne, Lognes, Croissy-Beaubourg, Bussy-Saint-Georges, Lagny-sur-Marne et Marne-la-Vallée."
+  },
+  {
+    q: "Où trouver une électrolyse permanente près de Noisiel ?",
+    a: "Electrolyse Signature est le cabinet d'électrolyse permanente de référence à Noisiel (Seine-et-Marne, 77). La praticienne Amal reçoit exclusivement les femmes dans un cabinet moderne, accessible en RER A et en voiture (parking gratuit)."
+  },
 ]
 
 export default function FAQ() {

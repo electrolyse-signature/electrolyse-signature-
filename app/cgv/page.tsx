@@ -17,7 +17,7 @@ export default function CGV() {
           47 Grande Allée du 12 Février 1934, 77186 Noisiel<br />
           Téléphone : +33 7 69 83 29 44<br />
           Email : electrolyse.signature@gmail.com<br />
-          SIRET : XXX XXX XXX XXXXX<br />
+          SIRET : <span className="text-red-400">[À COMPLÉTER]</span><br />
           TVA non applicable — article 293 B du CGI
         </p>
       </section>

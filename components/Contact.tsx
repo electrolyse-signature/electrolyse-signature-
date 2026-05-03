@@ -149,6 +149,12 @@ export default function Contact() {
                   Une erreur est survenue. Veuillez réessayer.
                 </p>
               )}
+
+              <p className="font-sans text-xs text-text-secondary leading-relaxed">
+                Vos données (nom, email, message) sont utilisées uniquement pour répondre à votre demande, conformément à notre{' '}
+                <a href="/politique-de-confidentialite" className="text-blush hover:underline">politique de confidentialité</a>.
+                Vous pouvez exercer vos droits (accès, rectification, effacement) à tout moment à l&apos;adresse electrolyse.signature@gmail.com, dans un délai de 30 jours.
+              </p>
             </form>
           </div>
         </div>
