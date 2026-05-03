@@ -13,6 +13,7 @@ const links = [
   { label: 'Services', href: '#services' },
   { label: 'Réservation', href: '#reservation' },
   { label: 'Avis', href: '#avis' },
+  { label: 'FAQ', href: '#faq' },
   { label: 'Contact', href: '#contact' },
 ]
 

@@ -70,7 +70,9 @@
       "WebFetch(domain:support.google.com)",
       "WebFetch(domain:cal.com)",
       "WebFetch(domain:app.cal.com)",
-      "WebFetch(domain:www.treatwell.co.uk)"
+      "WebFetch(domain:www.treatwell.co.uk)",
+      "Bash(node -e \"const r = require\\('./lib/treatwell-reviews.ts'\\); console.log\\('impossible'\\)\")",
+      "Bash(findstr /c:\"author:\" lib\\\\treatwell-reviews.ts)"
     ]
   },
   "hooks": {

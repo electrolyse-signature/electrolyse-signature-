@@ -5,7 +5,7 @@ function openCal() {
   if (Cal?.ns?.general) Cal.ns.general('modal', { calLink: 'electrolyse.signature' })
 }
 
-export default function Hero() {
+export default function Hero({ totalReviews = 86 }: { totalReviews?: number }) {
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden"
       style={{ background: 'linear-gradient(160deg, #FDFAF7 0%, #F0E6DC 50%, #E8D5C4 100%)' }}>
@@ -18,7 +18,7 @@ export default function Hero() {
       <div className="relative z-10 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-sans text-text-secondary mb-8 border border-beige">
           <span className="text-amber-400">★★★★★</span>
-          <span>5/5 · 86 avis vérifiés</span>
+          <span>5/5 · {totalReviews}+ avis vérifiés</span>
         </div>
 
         <h1 className="font-serif italic text-5xl md:text-7xl text-text-primary leading-tight mb-6">
