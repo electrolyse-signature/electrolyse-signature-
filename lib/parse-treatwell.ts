@@ -15,25 +15,28 @@ export interface TreatwellBooking {
 export function isBookingEmail(subject: string, body: string): boolean {
   const text = (subject + ' ' + body).toLowerCase()
   return (
-    text.includes('nouvelle réservation') ||
-    text.includes('nouveau rendez-vous') ||
-    text.includes('réservation confirmée') ||
-    text.includes('new booking') ||
-    text.includes('appointment confirmed')
+    text.includes('réservation') ||
+    text.includes('reservation') ||
+    text.includes('rendez-vous') ||
+    text.includes('félicitations') ||
+    text.includes('felicitations') ||
+    text.includes('booking')
   )
 }
 
 function extractDate(text: string): { day: number; month: number; year: number } | null {
-  // Pattern 1: "13 mai 2026" (with optional day name: "mardi 13 mai 2026")
+  // Pattern 1: "19 mai 2026" ou "mardi 19 mai 2026"
   const m1 = text.match(
     /(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)?\s*(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s+(\d{4})/i,
   )
   if (m1) {
-    const month = FRENCH_MONTHS[m1[2].toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')]
-    return { day: parseInt(m1[1]), month: month ?? 0, year: parseInt(m1[3]) }
+    const monthKey = m1[2].toLowerCase()
+      .replace('é', 'e').replace('è', 'e').replace('û', 'u').replace('î', 'i').replace('â', 'a')
+    const month = FRENCH_MONTHS[m1[2].toLowerCase()] ?? FRENCH_MONTHS[monthKey] ?? 0
+    return { day: parseInt(m1[1]), month, year: parseInt(m1[3]) }
   }
 
-  // Pattern 2: "13/05/2026" or "13-05-2026"
+  // Pattern 2: "13/05/2026" ou "13-05-2026"
   const m2 = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/)
   if (m2) {
     return { day: parseInt(m2[1]), month: parseInt(m2[2]) - 1, year: parseInt(m2[3]) }
@@ -43,27 +46,61 @@ function extractDate(text: string): { day: number; month: number; year: number }
 }
 
 function extractTime(text: string): { hours: number; minutes: number } | null {
-  // Pattern: "à 10h30", "10h30", "10:30"
-  const m = text.match(/[àa]\s*(\d{1,2})h(\d{2})?/i) || text.match(/(\d{1,2})[h:](\d{2})/)
-  if (!m) return null
-  return { hours: parseInt(m[1]), minutes: parseInt(m[2] ?? '0') }
+  // Pattern Treatwell : "19 mai 2026 at 11:30"
+  const mAt = text.match(/at\s+(\d{1,2}):(\d{2})/i)
+  if (mAt) return { hours: parseInt(mAt[1]), minutes: parseInt(mAt[2]) }
+
+  // Pattern français : "à 10h30", "à 10h"
+  const mH = text.match(/[àa]\s+(\d{1,2})h(\d{2})?/i)
+  if (mH) return { hours: parseInt(mH[1]), minutes: parseInt(mH[2] ?? '0') }
+
+  // Pattern générique : "10h30", "10:30"
+  const mG = text.match(/(\d{1,2})[h:](\d{2})/)
+  if (mG) return { hours: parseInt(mG[1]), minutes: parseInt(mG[2]) }
+
+  return null
 }
 
 function extractDuration(text: string): number {
-  // Pattern: "1h30", "1 heure 30", "45 min", "30 minutes"
-  const mHour = text.match(/(\d+)\s*h(?:eure(?:s)?)?\s*(\d+)?\s*(?:min)?/i)
-  if (mHour) {
-    const h = parseInt(mHour[1])
-    const m = parseInt(mHour[2] ?? '0')
-    const total = h * 60 + m
-    if (total > 0 && total <= 240) return total
-  }
+  // Pattern : "15 minutes", "30 min", "1h30", "1 heure"
   const mMin = text.match(/(\d+)\s*min(?:utes?)?/i)
   if (mMin) {
     const total = parseInt(mMin[1])
     if (total > 0 && total <= 240) return total
   }
-  return 30 // default
+  const mHour = text.match(/(\d+)\s*h(?:eure(?:s)?)?\s*(\d+)?\s*(?:min)?/i)
+  if (mHour) {
+    const total = parseInt(mHour[1]) * 60 + parseInt(mHour[2] ?? '0')
+    if (total > 0 && total <= 240) return total
+  }
+  return 30
+}
+
+function extractClient(text: string): string {
+  // Pattern Treatwell : "Nom du client     Soufiane SAIDY"
+  const mNom = text.match(/nom\s+du\s+client\s+([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ\s\-]+?)(?:\s{2,}|\n|\r)/i)
+  if (mNom) return mNom[1].trim()
+
+  // Pattern : "Avec     Amal"
+  const mAvec = text.match(/avec\s+([A-Za-zÀ-ÿ][a-zà-ÿ]+(?:\s+[A-Za-zÀ-Ÿ][a-zà-ÿ]+)*)/i)
+  if (mAvec) return mAvec[1].trim()
+
+  // Pattern : "Cliente : Marie"
+  const mClient = text.match(/cliente?\s*:\s*([A-Za-zÀ-ÿ][a-zà-ÿ]+(?:\s+[A-Za-zÀ-Ÿ][a-zà-ÿ]+)*)/i)
+  if (mClient) return mClient[1].trim()
+
+  return 'Cliente Treatwell'
+}
+
+function extractService(text: string): string {
+  // Pattern Treatwell : "Nom de la prestation     OBLIGATOIRE : ..."
+  const mPrest = text.match(/nom\s+de\s+la\s+prestation\s+([^\n\r]+)/i)
+  if (mPrest) return mPrest[1].trim()
+
+  const mService = text.match(/(?:prestation|service|soin)\s*:?\s*([^\n\r]+)/i)
+  if (mService) return mService[1].trim()
+
+  return 'Électrolyse'
 }
 
 export function parseTreatwellEmail(subject: string, body: string): TreatwellBooking | null {
@@ -77,14 +114,8 @@ export function parseTreatwellEmail(subject: string, body: string): TreatwellBoo
   if (!date || !time) return null
 
   const durationMinutes = extractDuration(fullText)
-
-  const clientMatch = fullText.match(
-    /(?:avec|cliente?\s*:)\s*([A-ZÀ-Ÿa-zà-ÿ][a-zà-ÿ]+(?:\s+[A-ZÀ-Ÿ][a-zà-ÿ]+)*)/i,
-  )
-  const clientName = clientMatch?.[1]?.trim() ?? 'Cliente Treatwell'
-
-  const serviceMatch = fullText.match(/(?:prestation|service|soin)\s*:?\s*([^\n\r]+)/i)
-  const serviceName = serviceMatch?.[1]?.trim() ?? 'Électrolyse'
+  const clientName = extractClient(fullText)
+  const serviceName = extractService(fullText)
 
   const start = new Date(date.year, date.month, date.day, time.hours, time.minutes, 0)
   const end = new Date(start.getTime() + durationMinutes * 60 * 1000)
