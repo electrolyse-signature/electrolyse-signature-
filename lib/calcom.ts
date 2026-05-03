@@ -23,17 +23,11 @@ async function getEventTypes(apiKey: string): Promise<CalEventType[]> {
 }
 
 // Trouve l'event type dont la durée est la plus proche par excès de durationMinutes.
-// Exclut les consultations initiales (slug "secret") pour les vraies séances.
 async function resolveEventTypeId(apiKey: string, durationMinutes: number): Promise<number> {
   const types = await getEventTypes(apiKey)
   if (types.length === 0) throw new Error('Aucun event type trouvé dans Cal.com')
 
-  // Exclure la consultation initiale pour les blocages Treatwell (séances uniquement)
-  const seances = types.filter(t => t.slug !== 'secret')
-  const pool = seances.length > 0 ? seances : types
-
-  // Trier par durée croissante et prendre la plus proche par excès
-  const sorted = [...pool].sort((a, b) => a.length - b.length)
+  const sorted = [...types].sort((a, b) => a.length - b.length)
   const match = sorted.find(t => t.length >= durationMinutes) ?? sorted[sorted.length - 1]
   return match.id
 }
