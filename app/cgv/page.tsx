@@ -62,8 +62,7 @@ export default function CGV() {
       <section className="mb-8">
         <h2 className="font-sans font-semibold text-lg mb-3">Article 7 — Droit de rétractation</h2>
         <p className="text-text-secondary leading-relaxed">
-          Conformément à l'article L. 221-28 du Code de la consommation, le droit de rétractation ne peut être exercé pour les contrats de prestations de services pleinement exécutés avant la fin du délai de rétractation et dont l'exécution a commencé après accord exprès du consommateur.<br /><br />
-          En réservant une séance, la cliente reconnaît expressément que la prestation sera exécutée lors du rendez-vous et renonce à son droit de rétractation de 14 jours à compter de la réalisation de la séance.
+          Conformément à l'article L. 221-28 2° du Code de la consommation, le droit de rétractation ne s'applique pas aux prestations de services réalisées en cabinet. Les séances d'électrolyse étant des prestations exécutées physiquement sur place, aucun droit de rétractation ne peut être invoqué une fois la séance réalisée.
         </p>
       </section>
 
