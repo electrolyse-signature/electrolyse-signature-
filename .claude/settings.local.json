@@ -87,7 +87,11 @@
       "Bash(export PATH=\"/a/npm-global:$PATH\")",
       "Bash(ruflo --help)",
       "Bash(ruflo init *)",
-      "Bash(ruflo memory *)"
+      "Bash(ruflo memory *)",
+      "Bash(npx vercel *)",
+      "Bash(vercel env *)",
+      "Bash(node /a/npm-global/node_modules/.bin/vercel env pull .env.local)",
+      "Bash(node /a/npm-global/node_modules/vercel/dist/index.js env pull .env.local)"
     ]
   },
   "hooks": {
