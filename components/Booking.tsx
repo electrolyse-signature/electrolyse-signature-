@@ -1,5 +1,10 @@
 'use client'
 
+function openCal() {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.general) Cal.ns.general('modal', { calLink: 'electrolyse.signature' })
+}
+
 export default function Booking() {
   return (
     <section id="reservation" className="section-padding bg-white">
@@ -16,12 +21,12 @@ export default function Booking() {
         </div>
 
         <div className="text-center">
-          <a
-            href="#services"
-            className="inline-block bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+          <button
+            onClick={openCal}
+            className="bg-blush text-white font-sans text-base px-10 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             Choisir mon créneau →
-          </a>
+          </button>
         </div>
       </div>
     </section>

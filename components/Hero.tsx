@@ -1,5 +1,10 @@
 'use client'
 
+function openCal() {
+  const Cal = (window as any).Cal
+  if (Cal?.ns?.general) Cal.ns.general('modal', { calLink: 'electrolyse.signature' })
+}
+
 export default function Hero() {
   return (
     <section id="accueil" className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden"
@@ -29,12 +34,12 @@ export default function Hero() {
           La seule méthode d&apos;épilation définitivement reconnue, entre des mains expertes.
         </p>
 
-        <a
-          href="#services"
-          className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+        <button
+          onClick={openCal}
+          className="inline-block bg-blush text-white font-sans text-base px-8 py-4 rounded-full hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
         >
           Prendre rendez-vous
-        </a>
+        </button>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-text-secondary opacity-60">

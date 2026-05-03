@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, Lato } from 'next/font/google'
 import Script from 'next/script'
+import CookieBanner from '@/components/CookieBanner'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -87,7 +88,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <CookieBanner />
+      </body>
       <Script
         id="cal-init"
         strategy="afterInteractive"
