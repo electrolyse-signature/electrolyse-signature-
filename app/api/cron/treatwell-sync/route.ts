@@ -20,6 +20,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: `Gmail: ${err.message}` }, { status: 500 })
   }
 
+  if (emails.length === 0) {
+    return NextResponse.json({ processed: 0, results: [], debug: 'Aucun email Treatwell trouvé dans Gmail (7 derniers jours)' })
+  }
+
   const results = []
 
   for (const email of emails) {

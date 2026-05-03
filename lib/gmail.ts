@@ -36,7 +36,7 @@ export async function fetchTreatwellEmails(): Promise<GmailMessage[]> {
 
   const list = await gmail.users.messages.list({
     userId: 'me',
-    q: 'from:treatwell newer_than:1d',
+    q: 'treatwell newer_than:7d',
     maxResults: 20,
   })
 
