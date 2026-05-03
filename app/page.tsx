@@ -9,6 +9,7 @@ import FAQ from '@/components/FAQ'
 import Contact from '@/components/Contact'
 import Footer from '@/components/Footer'
 import WhatsAppButton from '@/components/WhatsAppButton'
+import InstagramButton from '@/components/InstagramButton'
 import { supabaseAdmin } from '@/lib/supabase'
 import { DEFAULT_PRICES } from '@/lib/prices'
 import { fetchTotalReviews } from '@/lib/reviews'
@@ -38,6 +39,7 @@ export default async function Home() {
         <Contact />
       </main>
       <Footer />
+      <InstagramButton />
       <WhatsAppButton />
     </>
   )
