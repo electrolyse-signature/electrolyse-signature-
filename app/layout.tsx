@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Cormorant_Garamond, Lato } from 'next/font/google'
 import Script from 'next/script'
 import CookieBanner from '@/components/CookieBanner'
+import { fetchTotalReviews } from '@/lib/reviews'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
@@ -34,38 +35,46 @@ export const metadata: Metadata = {
     url: SITE_URL,
     images: [{ url: '/og-image.jpeg', alt: 'Electrolyse Signature – Épilation permanente à Noisiel' }],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Electrolyse Signature | Épilation permanente à Noisiel',
+    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel. Praticienne certifiée Amal. 86 avis 5/5.",
+    images: ['/og-image.jpeg'],
+  },
 }
 
-const localBusinessSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BeautySalon',
-  name: 'Electrolyse Signature',
-  description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel, Seine-et-Marne.",
-  url: SITE_URL,
-  telephone: '+33769832944',
-  email: 'electrolyse.signature@gmail.com',
-  priceRange: '€€',
-  image: `${SITE_URL}/og-image.jpeg`,
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: 'Noisiel',
-    addressRegion: 'Seine-et-Marne',
-    addressCountry: 'FR',
-  },
-  geo: {
-    '@type': 'GeoCoordinates',
-    latitude: 48.8442,
-    longitude: 2.6275,
-  },
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '5',
-    reviewCount: '86',
-  },
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
-  ],
-  sameAs: ['https://www.instagram.com/electrolyse.signature/'],
+function buildLocalBusinessSchema(reviewCount: number) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BeautySalon',
+    name: 'Electrolyse Signature',
+    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel, Seine-et-Marne.",
+    url: SITE_URL,
+    telephone: '+33769832944',
+    email: 'electrolyse.signature@gmail.com',
+    priceRange: '€€',
+    image: `${SITE_URL}/og-image.jpeg`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Noisiel',
+      addressRegion: 'Seine-et-Marne',
+      addressCountry: 'FR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 48.8442,
+      longitude: 2.6275,
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '5',
+      reviewCount: String(reviewCount),
+    },
+    openingHoursSpecification: [
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '09:00', closes: '19:00' },
+    ],
+    sameAs: ['https://www.instagram.com/electrolyse.signature/'],
+  }
 }
 
 const faqSchema = {
@@ -81,7 +90,9 @@ const faqSchema = {
   ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const totalReviews = await fetchTotalReviews()
+  const localBusinessSchema = buildLocalBusinessSchema(totalReviews)
   return (
     <html lang="fr" className={`${cormorant.variable} ${lato.variable}`}>
       <head>

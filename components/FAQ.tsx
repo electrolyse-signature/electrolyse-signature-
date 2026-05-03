@@ -1,6 +1,4 @@
-'use client'
-
-import { useState } from 'react'
+import FAQAccordion from './FAQAccordion'
 
 const faqs = [
   {
@@ -38,8 +36,6 @@ const faqs = [
 ]
 
 export default function FAQ() {
-  const [open, setOpen] = useState<number | null>(null)
-
   return (
     <section id="faq" className="section-padding bg-white">
       <div className="max-w-3xl mx-auto">
@@ -48,25 +44,7 @@ export default function FAQ() {
           <h2 className="section-title">Tout savoir sur l&apos;électrolyse</h2>
           <p className="section-subtitle">Les réponses aux questions les plus fréquentes sur l&apos;épilation définitive par électrolyse.</p>
         </div>
-
-        <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <div key={i} className="border border-beige rounded-2xl overflow-hidden">
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-bg transition-colors"
-              >
-                <span className="font-sans font-medium text-text-primary pr-4">{faq.q}</span>
-                <span className={`text-blush text-xl shrink-0 transition-transform duration-200 ${open === i ? 'rotate-45' : ''}`}>+</span>
-              </button>
-              {open === i && (
-                <div className="px-6 pb-5">
-                  <p className="font-sans text-text-secondary leading-relaxed">{faq.a}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <FAQAccordion faqs={faqs} />
       </div>
     </section>
   )
