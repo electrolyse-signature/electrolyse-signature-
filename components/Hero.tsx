@@ -28,7 +28,7 @@ export default function Hero({ totalReviews = 86 }: { totalReviews?: number }) {
         </h1>
 
         <p className="font-sans text-text-secondary text-lg md:text-xl font-light mb-4">
-          Cabinet réservé aux femmes · Noisiel, Seine-et-Marne (77)
+          Cabinet réservé aux femmes · Noisiel, Seine-et-Marne
         </p>
         <p className="font-sans text-text-secondary text-base font-light mb-4">
           La seule méthode d&apos;épilation définitivement reconnue, entre des mains expertes.

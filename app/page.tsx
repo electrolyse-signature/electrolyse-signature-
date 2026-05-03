@@ -29,11 +29,11 @@ export default async function Home() {
       <Navigation />
       <main>
         <Hero totalReviews={totalReviews} />
-        <About />
+        <About totalReviews={totalReviews} />
         <Gallery />
         <Services prices={prices} />
         <Booking />
-        <Reviews />
+        <Reviews totalReviews={totalReviews} />
         <FAQ />
         <Contact />
       </main>

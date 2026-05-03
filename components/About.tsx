@@ -1,12 +1,11 @@
 import Image from 'next/image'
 
-const stats = [
-  { value: '86', label: 'Avis vérifiés' },
-  { value: '5/5', label: 'Note moyenne' },
-  { value: '♿', label: 'Accessible PMR' },
-]
-
-export default function About() {
+export default function About({ totalReviews = 86 }: { totalReviews?: number }) {
+  const stats = [
+    { value: `${totalReviews}`, label: 'Avis vérifiés' },
+    { value: '5/5', label: 'Note moyenne' },
+    { value: '♿', label: 'Accessible PMR' },
+  ]
   return (
     <section id="a-propos" className="section-padding bg-white">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">

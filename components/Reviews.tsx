@@ -20,7 +20,7 @@ function Badge({ source }: { source: 'google' | 'treatwell' }) {
     : <span className="text-xs font-sans bg-rose-50 text-rose-500 px-2 py-0.5 rounded-full border border-rose-100">Treatwell</span>
 }
 
-export default function Reviews() {
+export default function Reviews({ totalReviews = 86 }: { totalReviews?: number }) {
   const [allReviews, setAllReviews] = useState<Review[]>(treatwellReviews)
   const [activeIndex, setActiveIndex] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -62,7 +62,7 @@ export default function Reviews() {
           <div className="flex items-center justify-center gap-3 mt-4">
             <span className="text-amber-400 text-2xl">★★★★★</span>
             <span className="font-serif text-3xl text-text-primary">5/5</span>
-            <span className="font-sans text-text-secondary">· 86+ avis vérifiés</span>
+            <span className="font-sans text-text-secondary">· {totalReviews}+ avis vérifiés</span>
           </div>
         </div>
 
