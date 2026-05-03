@@ -23,13 +23,13 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://electrolyse-signat
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: 'Electrolyse Signature | Épilation permanente à Noisiel',
-  description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 86 avis 5/5. Prenez rendez-vous en ligne.",
+  description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 88 avis 5/5. Prenez rendez-vous en ligne.",
   keywords: ['électrolyse', 'électrolyse permanente', 'épilation définitive', 'Noisiel', 'Seine-et-Marne', '77', 'électrolyse 77', 'épilation permanente 77', 'électrolyse Seine-et-Marne', 'cabinet électrolyse', 'électrolyse femme', 'Torcy', 'Champs-sur-Marne', 'Lognes', 'Bussy-Saint-Georges', 'Marne-la-Vallée', 'Lagny-sur-Marne'],
   alternates: { canonical: SITE_URL },
   robots: { index: true, follow: true },
   openGraph: {
     title: 'Electrolyse Signature | Épilation permanente à Noisiel',
-    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 86 avis 5/5.",
+    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 88 avis 5/5.",
     locale: 'fr_FR',
     type: 'website',
     url: SITE_URL,
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Electrolyse Signature | Épilation permanente à Noisiel',
-    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 86 avis 5/5.",
+    description: "Cabinet d'électrolyse permanente réservé aux femmes à Noisiel (77), Seine-et-Marne. Praticienne certifiée Amal. 88 avis 5/5.",
     images: ['/og-image.jpeg'],
   },
 }

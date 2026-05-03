@@ -1,11 +1,9 @@
-import { treatwellReviews } from './treatwell-reviews'
-
-const TREATWELL_COUNT = treatwellReviews.length
+import { TREATWELL_TOTAL } from './treatwell-reviews'
 
 export async function fetchTotalReviews(): Promise<number> {
   const apiKey = process.env.GOOGLE_PLACES_API_KEY
   const placeId = process.env.GOOGLE_PLACE_ID
-  if (!apiKey || !placeId) return 86
+  if (!apiKey || !placeId) return TREATWELL_TOTAL
   try {
     const res = await fetch(
       `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=user_ratings_total&key=${apiKey}`,
@@ -13,8 +11,8 @@ export async function fetchTotalReviews(): Promise<number> {
     )
     const json = await res.json()
     const google = json.result?.user_ratings_total ?? 0
-    return google + TREATWELL_COUNT
+    return google + TREATWELL_TOTAL
   } catch {
-    return 86
+    return TREATWELL_TOTAL
   }
 }
