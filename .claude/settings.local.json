@@ -84,7 +84,8 @@
       "WebFetch(domain:github.com)",
       "Bash(export PATH=\"A:/npm-global/bin:$PATH\")",
       "Bash(ruflo --version)",
-      "Bash(export PATH=\"/a/npm-global:$PATH\")"
+      "Bash(export PATH=\"/a/npm-global:$PATH\")",
+      "Bash(ruflo --help)"
     ]
   },
   "hooks": {
