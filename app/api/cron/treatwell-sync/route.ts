@@ -46,7 +46,7 @@ export async function GET(req: Request) {
     }
 
     try {
-      const booking = await createBlockerBooking(parsed.start, parsed.end, parsed.clientName)
+      const booking = await createBlockerBooking(parsed.start, parsed.end, parsed.clientName, parsed.durationMinutes)
       await supabaseAdmin.from('treatwell_sync_log').insert({
         gmail_message_id: email.id,
         raw_subject: email.subject,
