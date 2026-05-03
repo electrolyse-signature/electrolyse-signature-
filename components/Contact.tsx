@@ -85,6 +85,13 @@ export default function Contact() {
             >
               Voir sur Google Maps →
             </a>
+
+            <div>
+              <h3 className="font-serif text-xl mb-3">Zones desservies</h3>
+              <p className="font-sans text-text-secondary text-sm leading-relaxed">
+                Cabinet situé à <strong className="text-text-primary font-normal">Noisiel (77186)</strong>, accessible depuis toute la <strong className="text-text-primary font-normal">Seine-et-Marne (77)</strong> : Torcy, Champs-sur-Marne, Lognes, Croissy-Beaubourg, Emerainville, Bussy-Saint-Georges, Lagny-sur-Marne, Pontault-Combault et Marne-la-Vallée.
+              </p>
+            </div>
           </div>
 
           <div>
